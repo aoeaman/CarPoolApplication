@@ -9,6 +9,5 @@ namespace CarPoolApplication
     class Rider:User
     {
         string BookingID { get; set; }
-
     }
 }

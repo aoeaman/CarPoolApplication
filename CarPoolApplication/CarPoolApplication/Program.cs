@@ -10,8 +10,7 @@ namespace CarPoolApplication
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(long.MaxValue);
-            Console.ReadKey();
+            Rider rider = new Rider();
         }
     }
 }
