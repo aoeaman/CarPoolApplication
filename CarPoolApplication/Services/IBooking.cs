@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CarPoolApplication.Services
 {
-    interface IBooking
+    public interface IBooking
     {
         
     }

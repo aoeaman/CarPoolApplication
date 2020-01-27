@@ -8,7 +8,7 @@ namespace CarPoolApplication.Models
 {
     public class Driver :User
     {
-        public string VehicleNumber { get; set; }
+        public List<int> VehicleIDs { get; set; }
         public string DrivingLiscenceNumber { get; set; }
     }
 }

@@ -5,6 +5,26 @@ namespace CarPoolApplication.Services
 {
     public class UtilityService
     {
+        public string GenerateID()
+        {
+            Random random = new Random();
+            return random.Next(10000,99999).ToString()+ DateTime.UtcNow.Year + DateTime.UtcNow.Millisecond;
+        }
+
+        public byte GetByteOnly()
+        {
+            byte Choice;
+            try
+            {
+                Choice = byte.Parse(Console.ReadLine());
+                return Choice;
+            }
+            catch (Exception)
+            {
+                return GetByteOnly();
+            }
+        }
+
         public int GetIntegerOnly()
         {
             int Choice;
@@ -17,11 +37,6 @@ namespace CarPoolApplication.Services
             {
                 return GetIntegerOnly();
             }
-        }
-
-        public string GenerateID(string name)
-        {
-            return name.Substring(0, 3).ToUpper() + DateTime.UtcNow.Year + DateTime.UtcNow.Millisecond;
         }
 
         public string ReadPassword()

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public interface IPooling
+    public interface IUser
     {
-        Trip Create(Trip trip,string name);
     }
 }
