@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarPoolApplication
 {
-    class Driver:User
+    public class Driver :User
     {
         string VehicleNumber { get; set; }
         string DrivingLiscenceNumber { get; set; }

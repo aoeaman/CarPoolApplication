@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication", "CarPoolApplication\CarPoolApplication.csproj", "{C719F08B-9C29-4F12-9ACE-5425C4DF3BF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication.Models", "Models\CarPoolApplication.Models.csproj", "{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication.Services", "Services\CarPoolApplication.Services.csproj", "{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

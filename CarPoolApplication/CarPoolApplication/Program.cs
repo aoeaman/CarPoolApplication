@@ -10,7 +10,7 @@ namespace CarPoolApplication
     {
         static void Main(string[] args)
         {
-            Rider rider = new Rider();
+            
         }
     }
 }

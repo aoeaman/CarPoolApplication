@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarPoolApplication
 {
-    class Vehicle
+    public class Vehicle
     {
         string ID { get; set; }
         string Maker { get; set; }

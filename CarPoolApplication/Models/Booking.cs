@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarPoolApplication
 {
-    class Booking:CarPool
+    public class Booking :CarPool
     {
         decimal Fare { get; set; }
         byte Seats { get; set; }

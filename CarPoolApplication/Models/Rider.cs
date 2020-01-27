@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarPoolApplication
 {
-    class Rider:User
+    public class Rider:User
     {
         string BookingID { get; set; }
     }
