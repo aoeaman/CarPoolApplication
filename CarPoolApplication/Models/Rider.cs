@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
     public class Rider:User
     {

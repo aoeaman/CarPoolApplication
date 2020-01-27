@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
     public class User
     {
-        string ID { get; set; }
-        string Name { get; set; }
-        string Username { get; set; }
-        string Password { get; set; }
-        char Gender { get; set; }
-        byte Age { get; set; }
-        string PhoneNumber { get; set; }
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public char Gender { get; set; }
+        public byte Age { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

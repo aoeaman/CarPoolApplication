@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
     public class Booking :CarPool
     {
-        decimal Fare { get; set; }
-        byte Seats { get; set; }
+        public decimal Fare { get; set; }
+        public byte Seats { get; set; }
     }
 }

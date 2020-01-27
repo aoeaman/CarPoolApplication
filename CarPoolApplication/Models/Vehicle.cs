@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
     public class Vehicle
     {
-        string ID { get; set; }
-        string Maker { get; set; }
-        string Number { get; set; }
-        byte Seats { get; set; }
-        VehicleType Type { get; set; }
-
+        public string ID { get; set; }
+        public string Maker { get; set; }
+        public string Number { get; set; }
+        public byte Seats { get; set; }
+        public VehicleType Type { get; set; }
     }
 }

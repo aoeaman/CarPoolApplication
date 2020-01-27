@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
-    enum StatusOfRide
+    public enum StatusOfRide
     {
         Pending,
         Accepted,
@@ -15,7 +15,7 @@ namespace CarPoolApplication
         Completed
     }
 
-    enum VehicleType
+    public enum VehicleType
     {
         Bike,
         Car,

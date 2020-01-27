@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarPoolApplication
+namespace CarPoolApplication.Models
 {
     public class Driver :User
     {
-        string VehicleNumber { get; set; }
-        string DrivingLiscenceNumber { get; set; }
+        public string VehicleNumber { get; set; }
+        public string DrivingLiscenceNumber { get; set; }
     }
 }

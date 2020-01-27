@@ -1,8 +1,7 @@
 ﻿using System;
-
-namespace Services
+namespace CarPoolApplication.Services
 {
-    public class BookingService
+    public class BookingService:IBooking
     {
         
     }
