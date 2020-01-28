@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarPoolApplication.Models
 {
-    public class Book
+    public class CarPool
     {
         public string ID { get; set; }
         public StatusOfRide Status { get; set; }

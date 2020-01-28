@@ -7,7 +7,7 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication
 {
-    class DataBase
+    public class DataBase
     {
         public List<Trip> Trips = new List<Trip>();
         public List<Driver> Drivers = new List<Driver>();
