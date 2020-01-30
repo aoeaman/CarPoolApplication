@@ -7,6 +7,10 @@ namespace CarPoolApplication.Services
 {
     public interface IPooling
     {
-        Trip Create(Trip trip,string name);
+        Trip Create(Trip trip);
+
+        bool Delete(List<Trip> trips, Trip trip);
+
+        Trip Update(Trip trip);
     }
 }

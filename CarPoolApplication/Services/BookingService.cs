@@ -1,7 +1,7 @@
 ﻿using CarPoolApplication.Models;
 namespace CarPoolApplication.Services
 {
-    public class BookingService
+    public class BookingService:IBooking
     {
         UtilityService Service;
         public BookingService()

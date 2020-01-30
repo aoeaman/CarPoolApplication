@@ -2,7 +2,7 @@
 
 namespace CarPoolApplication.Services
 {
-    public class UserService
+    public class UserService:IUser
     {
         UtilityService Service;
 
