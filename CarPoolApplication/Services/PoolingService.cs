@@ -39,6 +39,10 @@ namespace CarPoolApplication.Services
             return trip;
         }
 
-        
+        public Trip Create(Trip trip)
+        {
+            trip.ID = Service.GenerateID();
+            return trip;
+        }
     }
 }

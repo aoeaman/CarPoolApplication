@@ -5,9 +5,17 @@ VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication", "CarPoolApplication\CarPoolApplication.csproj", "{C719F08B-9C29-4F12-9ACE-5425C4DF3BF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication.Models", "Models\CarPoolApplication.Models.csproj", "{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolApplication.Models", "Models\CarPoolApplication.Models.csproj", "{AE62DD88-B0DE-457E-9EB3-944F8A7DF4CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolApplication.Services", "Services\CarPoolApplication.Services.csproj", "{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolApplication.Services", "Services\CarPoolApplication.Services.csproj", "{B76EB711-E1A8-4E1A-A842-CD91F26B13DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalStorage", "LocalStorage", "{9C964F4B-984D-4170-987E-A467DF14FFA7}"
+	ProjectSection(SolutionItems) = preProject
+		Driver.JSON = Driver.JSON
+		Rider.JSON = Rider.JSON
+		Trips.Json = Trips.Json
+		Vehicle.JSON = Vehicle.JSON
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

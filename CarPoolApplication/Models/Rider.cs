@@ -8,6 +8,6 @@ namespace CarPoolApplication.Models
 {
     public class Rider:User
     {
-        string BookingID { get; set; }
+        List<string> BookingIDs { get; set; }
     }
 }

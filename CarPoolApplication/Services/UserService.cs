@@ -8,6 +8,7 @@ namespace CarPoolApplication.Services
     public class UserService
     {
         UtilityService Service;
+
         public UserService()
         {
             Service = new UtilityService();

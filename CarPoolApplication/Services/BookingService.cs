@@ -15,9 +15,15 @@ namespace CarPoolApplication.Services
             ride.Status = StatusOfRide.Accepted;
         }
 
-        public void CancelRide(Trip trip,Ride ride)
+        public void CancelRide(Ride ride)
         {
-            trip.Bookings.Remove(ride);
+            ride.Status = StatusOfRide.Cancelled;
+        }
+
+        public Ride CreateRide(Ride ride)
+        {
+            ride.ID=Service.GenerateID();
+            return ride;
         }
     }
 }
