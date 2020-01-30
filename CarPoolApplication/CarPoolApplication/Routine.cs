@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CarPoolApplication.Models;
 using CarPoolApplication.Services;
-using Newtonsoft.Json;
 
 namespace CarPoolApplication
 {

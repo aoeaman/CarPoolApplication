@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CarPoolApplication.Models;
 using CarPoolApplication.Services;
 using Newtonsoft.Json;
@@ -37,9 +35,9 @@ namespace CarPoolApplication
             Data.Trips = JsonConvert.DeserializeObject<List<Trip>>(File.ReadAllText(Paths.Trip));
         }
 
-        internal void SaveData<T>(T t)
+        internal void SaveData<T>(string path, T t)
         {
-            
+            File.WriteAllText(path, JsonConvert.SerializeObject(t));
         }
 
         internal void AddDriver(string name,string userName,byte age,char gender,string phoneNumber,string password,string drivingLiscenceNumber)
@@ -49,7 +47,7 @@ namespace CarPoolApplication
                 Driver NewDriver = SetDriver(name, userName, age, gender, phoneNumber, password, drivingLiscenceNumber);
                 NewDriver = UserServices.CreateDriver(NewDriver);               
                 Data.Drivers.Add(NewDriver);
-                File.WriteAllText(Paths.Driver, JsonConvert.SerializeObject(Data.Drivers));
+                SaveData(Paths.Driver,Data.Drivers);
             }
             else
             {
@@ -80,7 +78,7 @@ namespace CarPoolApplication
                 Rider NewRider = SetRider(name, userName, age, gender, phoneNumber, password);
                 NewRider = UserServices.CreateRider(NewRider);
                 Data.Riders.Add(NewRider);
-                File.WriteAllText(Paths.Rider, JsonConvert.SerializeObject(Data.Riders));
+                SaveData(Paths.Rider,Data.Riders);
             }
             else
             {
@@ -107,8 +105,8 @@ namespace CarPoolApplication
             vehicle = UserServices.RegisterVehicle(vehicle);
             driver.VehicleIDs.Add(vehicle.ID);
             Data.Vehicles.Add(vehicle);
-            File.WriteAllText(Paths.Vehicle, JsonConvert.SerializeObject(Data.Vehicles));
-            File.WriteAllText(Paths.Driver, JsonConvert.SerializeObject(Data.Drivers));
+            SaveData(Paths.Vehicle,Data.Vehicles);
+            SaveData(Paths.Driver,Data.Drivers);
 
         }
 
@@ -127,7 +125,7 @@ namespace CarPoolApplication
         {
             Trip trip=Data.Trips.Find(Element => Element.DriverID == driver.ID);
             PoolingServices.Delete(Data.Trips, trip);
-            File.WriteAllText(Paths.Trip, JsonConvert.SerializeObject(Data.Trips));
+            SaveData(Paths.Trip,Data.Trips);
         }
 
         internal List<Trip> ShowRequests(Driver driver)
@@ -143,7 +141,8 @@ namespace CarPoolApplication
         internal void GetBookingConfirmed(Trip trip, string confirmationID)
         {
             BookingServices.ConfirmRide(trip.Bookings.Find(Element => Element.RiderID == confirmationID));
-            File.WriteAllText(Paths.Trip, JsonConvert.SerializeObject(Data.Trips));
+            trip.Earnings += trip.Bookings.Find(Element => Element.RiderID == confirmationID).Fare;
+            SaveData(Paths.Trip,Data.Trips);
         }
 
         internal List<Trip> ViewOffers(Driver driver)
@@ -161,7 +160,7 @@ namespace CarPoolApplication
             Trip trip = SetTrip(vehicleID, driverID, source, destinaiton, viaPoints, seats, startDate, endDate);
             trip = PoolingServices.Create(trip);
             Data.Trips.Add(trip);
-            File.WriteAllText(Paths.Trip, JsonConvert.SerializeObject(Data.Trips));
+            SaveData(Paths.Trip,Data.Trips);
         }
 
         private static Trip SetTrip(string vehicleID, string driverID, int source, int destinaiton, List<int> viaPoints, byte seats, string startDate, string endDate)
@@ -192,24 +191,25 @@ namespace CarPoolApplication
         internal bool BookRide(string tripID, Rider rider, int source, int destinaiton, decimal fare,byte seats)
         {
             Trip trip = Data.Trips.Find(Name => Name.ID == tripID);
-            if (trip.SeatsAvailable<=seats)
+            if (trip.SeatsAvailable < seats)
+            {
+                return false;
+            }
+            else
             {
                 trip.Requests.Add(rider.ID);
                 Ride ride = SetRide(rider, source, destinaiton, fare, seats, trip);
                 ride = BookingServices.CreateRide(ride);
                 trip.Bookings.Add(ride);
-                File.WriteAllText(Paths.Trip, JsonConvert.SerializeObject(Data.Trips));
+                trip.SeatsAvailable -= seats;
+                SaveData(Paths.Trip, Data.Trips);
                 return true;
             }
-            else
-            {
-                return false;
-            }
-            
+
 
         }
 
-        private static Ride SetRide(Rider rider, int source, int destinaiton, decimal fare, byte seats, Trip trip)
+        private Ride SetRide(Rider rider, int source, int destinaiton, decimal fare, byte seats, Trip trip)
         {
             return new Ride()
             {
@@ -235,7 +235,7 @@ namespace CarPoolApplication
             foreach (var trip in Data.Trips)
             {
                
-                List<int> TripSequence = trip.ViaPoints;
+                List<int> TripSequence =new List<int>( trip.ViaPoints);
                 TripSequence.Insert(0, trip.Source);
                 TripSequence.Insert(TripSequence.Count, trip.Destination);
                 if (TripSequence.IndexOf(source) < TripSequence.IndexOf(destination))
@@ -257,7 +257,8 @@ namespace CarPoolApplication
             else
             {
                 BookingServices.CancelRide(Trip.Bookings.Find(Name => Name.ID == bookingID));
-                File.WriteAllText(Paths.Trip, JsonConvert.SerializeObject(Data.Trips));
+                Trip.Earnings -= Trip.Bookings.Find(Name => Name.ID == bookingID).Fare;
+                SaveData(Paths.Trip, Data.Trips);
                 return true;
             }
         }

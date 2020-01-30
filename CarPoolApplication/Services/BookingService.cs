@@ -1,5 +1,4 @@
-﻿using System;
-using CarPoolApplication.Models;
+﻿using CarPoolApplication.Models;
 namespace CarPoolApplication.Services
 {
     public class BookingService

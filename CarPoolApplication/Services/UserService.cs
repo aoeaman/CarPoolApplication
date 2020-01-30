@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CarPoolApplication.Models;
+﻿using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
