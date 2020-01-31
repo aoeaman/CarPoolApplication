@@ -4,11 +4,11 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public class PoolingService:IPooling
+    public class OfferService:IPooling
     {
         UtilityService Service;
 
-        public PoolingService()
+        public OfferService()
         {
             Service = new UtilityService();
         }

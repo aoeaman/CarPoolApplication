@@ -313,6 +313,12 @@ namespace CarPoolApplication
                     case 5:
                         {
                             List<Offer> Offers= Operation.ViewOffers(driver);
+                            if (Offers.Count == 0)
+                            {
+                                Console.WriteLine("No Offers Created:");
+                                Console.ReadKey();
+                                break;
+                            }
                             Console.WriteLine("ID \t\t Source \t Destination \t Number of Riders \t Status \t Earnings \n");
                             Offers.ForEach(Element => Console.WriteLine(Element.ID+ " \t " + Tools.Cities[Element.Source] + " \t " + Tools.Cities[Element.Destination] + " \t " + Element.Bookings.Count+ " \t\t\t " + Element.Status+ " \t " + Element.Earnings+" \n "));
                             Console.ReadKey();
