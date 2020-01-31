@@ -13,11 +13,11 @@ namespace CarPoolApplication.Services
             Service = new UtilityService();
         }
 
-        public bool Delete(List<Trip> trips,Trip trip)
+        public bool Delete(List<Offer> Offers,Offer Offer)
         {
             try
             {
-                trips.Remove(trip);
+                Offers.Remove(Offer);
                 return true;
             }
             catch (Exception)
@@ -26,13 +26,13 @@ namespace CarPoolApplication.Services
             }
         }       
 
-        public Trip Create(Trip trip)
+        public Offer Create(Offer Offer)
         {
-            trip.ID = Service.GenerateID();
-            return trip;
+            Offer.ID = Service.GenerateID();
+            return Offer;
         }
 
-        public Trip Update(Trip trip)
+        public Offer Update(Offer Offer)
         {
             throw new NotImplementedException();
         }

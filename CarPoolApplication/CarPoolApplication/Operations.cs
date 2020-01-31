@@ -20,19 +20,10 @@ namespace CarPoolApplication
 
         public Operations()
         {
-            //string S = JsonConvert.SerializeObject(new List<Driver>());
-            //File.WriteAllText(Paths.Driver, S);
-            //string S1 = JsonConvert.SerializeObject(new List<Trip>());
-            //File.WriteAllText(Paths.Trip, S1);
-            //string S2 = JsonConvert.SerializeObject(new List<Vehicle>());
-            //File.WriteAllText(Paths.Vehicle, S2);
-            //string S3 = JsonConvert.SerializeObject(new List<Rider>());
-            //File.WriteAllText(Paths.Rider, S3);
-
             Data.Drivers = JsonConvert.DeserializeObject<List<Driver>>(File.ReadAllText(Paths.Driver));
             Data.Riders = JsonConvert.DeserializeObject<List<Rider>>(File.ReadAllText(Paths.Rider));
             Data.Vehicles = JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(Paths.Vehicle));
-            Data.Trips = JsonConvert.DeserializeObject<List<Trip>>(File.ReadAllText(Paths.Trip));
+            Data.Offers = JsonConvert.DeserializeObject<List<Offer>>(File.ReadAllText(Paths.Offer));
         }
 
         internal void SaveData<T>(string path, T t)
@@ -102,7 +93,7 @@ namespace CarPoolApplication
         internal void AddVehicle(Driver driver,string vehicleNumber,string maker,VehicleType type,byte seats)
         {
             Vehicle vehicle = SetVehicle(vehicleNumber, maker, type, seats);
-            vehicle = UserServices.RegisterVehicle(vehicle);
+            vehicle = UserServices.RegisterUserVehicle(vehicle);
             driver.VehicleIDs.Add(vehicle.ID);
             Data.Vehicles.Add(vehicle);
             SaveData(Paths.Vehicle,Data.Vehicles);
@@ -123,31 +114,32 @@ namespace CarPoolApplication
 
         internal void DeleteOffer(Driver driver, string offerID)
         {
-            Trip trip=Data.Trips.Find(Element => Element.DriverID == driver.ID);
-            PoolingServices.Delete(Data.Trips, trip);
-            SaveData(Paths.Trip,Data.Trips);
+            Offer Offer=Data.Offers.Find(Element => Element.DriverID == driver.ID);
+            PoolingServices.Delete(Data.Offers, Offer);
+            SaveData(Paths.Offer,Data.Offers);
         }
 
-        internal List<Trip> ShowRequests(Driver driver)
+        internal List<Offer> ShowRequests(Driver driver)
         {
-             return Data.Trips.FindAll(Element => Element.DriverID == driver.ID);
+             return Data.Offers.FindAll(Element => Element.DriverID == driver.ID);
         }
 
-        internal List<Ride> GetRequests(Trip trip)
+        internal List<Booking> GetRequests(Offer offer)
         {
-            return trip.Bookings.FindAll(Element => Element.Status == StatusOfRide.Pending);
+            return offer.Bookings.FindAll(Element => Element.Status == StatusOfRide.Pending);
         }
 
-        internal void GetBookingConfirmed(Trip trip, string confirmationID)
+        internal void GetBookingConfirmed(Offer offer, string confirmationID)
         {
-            BookingServices.ConfirmRide(trip.Bookings.Find(Element => Element.RiderID == confirmationID));
-            trip.Earnings += trip.Bookings.Find(Element => Element.RiderID == confirmationID).Fare;
-            SaveData(Paths.Trip,Data.Trips);
+            BookingServices.ConfirmRide(offer.Bookings.Find(Element => Element.RiderID == confirmationID));
+            offer.Earnings += offer.Bookings.Find(Element => Element.RiderID == confirmationID).Fare;
+            offer.SeatsAvailable -= offer.Bookings.Find(Element => Element.RiderID == confirmationID).Seats;
+            SaveData(Paths.Offer,Data.Offers);
         }
 
-        internal List<Trip> ViewOffers(Driver driver)
+        internal List<Offer> ViewOffers(Driver driver)
         {
-            return Data.Trips.FindAll(Element=>Element.DriverID==driver.ID);
+            return Data.Offers.FindAll(Element=>Element.DriverID==driver.ID);
         }
 
         internal VehicleType GetVehilce(string vehicleID)
@@ -157,15 +149,15 @@ namespace CarPoolApplication
 
         internal void AddOffer(string vehicleID, string driverID,int source, int destinaiton, List<int> viaPoints, byte seats, string startDate, String endDate)
         {
-            Trip trip = SetTrip(vehicleID, driverID, source, destinaiton, viaPoints, seats, startDate, endDate);
-            trip = PoolingServices.Create(trip);
-            Data.Trips.Add(trip);
-            SaveData(Paths.Trip,Data.Trips);
+            Offer Offer = SetOffer(vehicleID, driverID, source, destinaiton, viaPoints, seats, startDate, endDate);
+            Offer = PoolingServices.Create(Offer);
+            Data.Offers.Add(Offer);
+            SaveData(Paths.Offer,Data.Offers);
         }
 
-        private static Trip SetTrip(string vehicleID, string driverID, int source, int destinaiton, List<int> viaPoints, byte seats, string startDate, string endDate)
+        private static Offer SetOffer(string vehicleID, string driverID, int source, int destinaiton, List<int> viaPoints, byte seats, string startDate, string endDate)
         {
-            return new Trip()
+            return new Offer()
             {
                 VehicleID = vehicleID,
                 Source = source,
@@ -176,10 +168,9 @@ namespace CarPoolApplication
                 EndDate = endDate,
                 Status = StatusOfRide.Created,
                 DriverID = driverID,
-                Bookings = new List<Ride>(),
+                Bookings = new List<Booking>(),
                 Earnings = 0,
                 Requests = new List<string>(),
-                CurrentCity = source
             };
         }
 
@@ -188,87 +179,85 @@ namespace CarPoolApplication
             return Math.Abs(Tools.Cities[source].First() + Tools.Cities[source].Last() - Tools.Cities[destinaiton].First() - Tools.Cities[destinaiton].Last()) * (decimal)15.99;
         }
 
-        internal bool BookRide(string tripID, Rider rider, int source, int destinaiton, decimal fare,byte seats)
+        internal bool BookRide(string OfferID, Rider rider, int source, int destinaiton, decimal fare,byte seats)
         {
-            Trip trip = Data.Trips.Find(Name => Name.ID == tripID);
-            if (trip.SeatsAvailable < seats)
+            Offer Offer = Data.Offers.Find(Name => Name.ID == OfferID);
+            if (Offer.SeatsAvailable < seats && seats>0)
             {
                 return false;
             }
             else
             {
-                trip.Requests.Add(rider.ID);
-                Ride ride = SetRide(rider, source, destinaiton, fare, seats, trip);
+                Offer.Requests.Add(rider.ID);
+                Booking ride = SetRide(rider, source, destinaiton, fare*seats, seats, Offer);
                 ride = BookingServices.CreateRide(ride);
-                trip.Bookings.Add(ride);
-                trip.SeatsAvailable -= seats;
-                SaveData(Paths.Trip, Data.Trips);
+                Offer.Bookings.Add(ride);               
+                SaveData(Paths.Offer, Data.Offers);
                 return true;
             }
 
 
         }
 
-        private Ride SetRide(Rider rider, int source, int destinaiton, decimal fare, byte seats, Trip trip)
+        private Booking SetRide(Rider rider, int source, int destinaiton, decimal fare, byte seats, Offer Offer)
         {
-            return new Ride()
+            return new Booking()
             {
                 RiderID = rider.ID,
                 Status = StatusOfRide.Pending,
                 Source = source,
                 Destination = destinaiton,
                 Fare = fare,
-                DriverID = trip.DriverID,
+                DriverID = Offer.DriverID,
                 Seats = seats,
-                StartDate = trip.StartDate
             };
         }
 
-        internal List<Trip> GetAllOffers()
+        internal List<Offer> GetAllOffers()
         {
-            return Data.Trips;
+            return Data.Offers.FindAll(Element=> Element.Status!= StatusOfRide.Completed);
         }
 
-        internal List<Trip> GetTrips(int source, int destination)
+        internal List<Offer> GetOffers(int source, int destination)
         {
-            List<Trip> Trips = new List<Trip>();
-            foreach (var trip in Data.Trips)
+            List<Offer> Offers = new List<Offer>();
+            foreach (var Offer in Data.Offers)
             {
                
-                List<int> TripSequence =new List<int>( trip.ViaPoints);
-                TripSequence.Insert(0, trip.Source);
-                TripSequence.Insert(TripSequence.Count, trip.Destination);
-                if (TripSequence.IndexOf(source) < TripSequence.IndexOf(destination))
+                List<int> OfferSequence =new List<int>( Offer.ViaPoints);
+                OfferSequence.Insert(0, Offer.Source);
+                OfferSequence.Insert(OfferSequence.Count-1, Offer.Destination);
+                if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
                 {
-                    Trips.Add(trip);
+                    Offers.Add(Offer);
                 }
             }
-            return Trips;
+            return Offers;
                       
         }
 
         internal bool RemoveRide(string bookingID)
         {
-            Trip Trip=Data.Trips.Find(Element => Element.Bookings.Any(Name => Name.ID == bookingID));
-            if (Trip == null)
+            Offer Offer=Data.Offers.Find(Element => Element.Bookings.Any(Name => Name.ID == bookingID && Name.Status!= StatusOfRide.Completed && Name.Status!= StatusOfRide.Rejected));
+            if (Offer == null)
             {
                 return false;
             }
             else
             {
-                BookingServices.CancelRide(Trip.Bookings.Find(Name => Name.ID == bookingID));
-                Trip.Earnings -= Trip.Bookings.Find(Name => Name.ID == bookingID).Fare;
-                SaveData(Paths.Trip, Data.Trips);
+                BookingServices.CancelRide(Offer.Bookings.Find(Name => Name.ID == bookingID));
+                Offer.Earnings -= Offer.Bookings.Find(Name => Name.ID == bookingID).Fare;
+                SaveData(Paths.Offer, Data.Offers);
                 return true;
             }
         }
 
-        internal List<Ride> GetBookings(Rider rider)
+        internal List<Booking> GetBookings(Rider rider)
         {
-            List<Ride> rides=new List<Ride>();
-            foreach (var Element in Data.Trips)
+            List<Booking> rides=new List<Booking>();
+            foreach (var Element in Data.Offers)
             {
-                Ride ride = Element.Bookings.Find(Name => Name.RiderID == rider.ID);
+                Booking ride = Element.Bookings.Find(Name => Name.RiderID == rider.ID);
                 if (ride != null)
                 {
                     rides.Add(ride);
@@ -276,6 +265,23 @@ namespace CarPoolApplication
                 
             }
             return rides;
+        }
+
+        internal void CompleteOffer(Offer offer)
+        {
+            offer.Status = StatusOfRide.Completed;
+            offer.Bookings.ForEach(Element => {
+                if (Element.Status== StatusOfRide.Pending)
+                {
+                    Element.Status = StatusOfRide.Rejected;
+                }
+                else
+                {
+                    Element.Status = StatusOfRide.Completed;
+                }
+            }
+            );
+            SaveData(Paths.Offer,Data.Offers);
         }
     }
 }

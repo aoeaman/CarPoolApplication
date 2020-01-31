@@ -7,7 +7,7 @@ namespace CarPoolApplication.Services
 {
     public interface IUser
     {
-        Vehicle RegisterVehicle(Vehicle vehicle);
+        Vehicle RegisterUserVehicle(Vehicle vehicle);
 
         Driver CreateDriver(Driver driver);
 

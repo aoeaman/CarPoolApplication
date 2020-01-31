@@ -23,7 +23,7 @@ namespace CarPoolApplication.Services
             return rider;
         }
 
-        public Vehicle RegisterVehicle(Vehicle vehicle)
+        public Vehicle RegisterUserVehicle(Vehicle vehicle)
         {
             vehicle.ID = Service.GenerateID();
             return vehicle;

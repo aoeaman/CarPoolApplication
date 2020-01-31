@@ -8,7 +8,6 @@
         Cancelled,
         Completed,
         Created,
-        Started
     }
 
     public enum VehicleType

@@ -9,17 +9,17 @@ namespace CarPoolApplication.Services
             Service = new UtilityService();
         }
 
-        public void ConfirmRide(Ride ride)
+        public void ConfirmRide(Booking ride)
         {
             ride.Status = StatusOfRide.Accepted;
         }
 
-        public void CancelRide(Ride ride)
+        public void CancelRide(Booking ride)
         {
             ride.Status = StatusOfRide.Cancelled;
         }
 
-        public Ride CreateRide(Ride ride)
+        public Booking CreateRide(Booking ride)
         {
             ride.ID=Service.GenerateID();
             return ride;
