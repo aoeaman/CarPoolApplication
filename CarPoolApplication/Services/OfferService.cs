@@ -1,19 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CarPoolApplication.Models;
+using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    public class OfferService:IOfferService
+    public class OfferService:IOfferService,ICommonService<Offer>
     {
         UtilityService Service;
-
+        IList<Offer> Offers;
+        public readonly string OfferPath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Trips.JSON";
         public OfferService()
         {
             Service = new UtilityService();
+            Offers= JsonConvert.DeserializeObject<List<Offer>>(File.ReadAllText(OfferPath));
         }
 
-        public bool Delete(List<Offer> Offers,Offer Offer)
+        public void Add(Offer offer)
+        {
+            Offers.Add(offer);
+        }
+
+        public bool Delete(Offer Offer)
         {
             try
             {
@@ -35,6 +44,11 @@ namespace CarPoolApplication.Services
         public Offer Update(Offer Offer)
         {
             throw new NotImplementedException();
+        }
+
+        public IList<Offer> GetAll()
+        {
+            return Offers;
         }
     }
 }

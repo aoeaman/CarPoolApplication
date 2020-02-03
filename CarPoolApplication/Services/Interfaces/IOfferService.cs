@@ -9,7 +9,7 @@ namespace CarPoolApplication.Services
     {
         Offer Create(Offer Offer);
 
-        bool Delete(List<Offer> Offers, Offer Offer);
+        bool Delete(Offer Offer);
 
         Offer Update(Offer Offer);
     }

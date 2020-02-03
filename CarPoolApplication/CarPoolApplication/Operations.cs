@@ -11,9 +11,10 @@ namespace CarPoolApplication
     public class Operations
     {
         
-        IUserService UserServices = new UserService();
+        ICommonService<Driver> UserServices = new DriverService();
+        ICommonService<Rider> RiderServices = new RiderService();
         IBookingService BookingServices = new BookingService();
-        IOfferService PoolingServices = new OfferService();
+        ICommonService<Offer> PoolingServices = new OfferService();
         UtilityService Tools= new UtilityService();
         internal DataBase Data = new DataBase();
         UtilityService.Path Paths = new UtilityService.Path();
@@ -22,7 +23,7 @@ namespace CarPoolApplication
         {
             Data.Drivers = JsonConvert.DeserializeObject<List<Driver>>(File.ReadAllText(Paths.Driver));
             Data.Riders = JsonConvert.DeserializeObject<List<Rider>>(File.ReadAllText(Paths.Rider));
-            Data.Vehicles = JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(Paths.Vehicle));
+            //Data.Vehicles = JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(Paths.Vehicle));
             Data.Offers = JsonConvert.DeserializeObject<List<Offer>>(File.ReadAllText(Paths.Offer));
         }
 
