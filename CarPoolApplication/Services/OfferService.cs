@@ -4,7 +4,7 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public class OfferService:IPooling
+    public class OfferService:IOfferService
     {
         UtilityService Service;
 

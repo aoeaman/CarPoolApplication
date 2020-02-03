@@ -5,7 +5,7 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public interface IUser
+    public interface IUserService
     {
         Vehicle RegisterUserVehicle(Vehicle vehicle);
 

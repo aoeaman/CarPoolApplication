@@ -5,12 +5,12 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public interface IBooking
+    public interface IOfferService
     {
-        void ConfirmRide(Booking ride);
+        Offer Create(Offer Offer);
 
-        void CancelRide(Booking ride);
+        bool Delete(List<Offer> Offers, Offer Offer);
 
-        Booking CreateRide(Booking ride);
+        Offer Update(Offer Offer);
     }
 }

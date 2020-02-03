@@ -11,9 +11,9 @@ namespace CarPoolApplication
     public class Operations
     {
         
-        UserService UserServices = new UserService();
-        BookingService BookingServices = new BookingService();
-        OfferService PoolingServices = new OfferService();
+        IUserService UserServices = new UserService();
+        IBookingService BookingServices = new BookingService();
+        IOfferService PoolingServices = new OfferService();
         UtilityService Tools= new UtilityService();
         internal DataBase Data = new DataBase();
         UtilityService.Path Paths = new UtilityService.Path();
