@@ -118,9 +118,9 @@ namespace CarPoolApplication
             SaveData(Paths.Offer, OfferServices.GetAll());
         }
 
-        internal List<Offer> ShowRequests(string driverID)
+        internal List<Offer> GetOfferByDriverID(string driverID)
         {          
-            return OfferServices.GetAll().FindAll(Element => Element.DriverID == driverID);
+            return OfferServices.GetAll().FindAll(Element => Element.DriverID == driverID && Element.Status== StatusOfRide.Created);
         }
 
         internal List<Booking> GetRequests(string offerID)
@@ -128,15 +128,23 @@ namespace CarPoolApplication
             return BookingServices.GetAll().FindAll(Element => Element.Status == StatusOfRide.Pending && Element.OfferID==offerID);
         }
 
-        internal void GetBookingConfirmed(string offerID, string confirmationID)
+        internal bool GetBookingConfirmed(string offerID, string confirmationID)
         {
             var Booking_ = BookingServices.GetAll().Find(Element => Element.RiderID == confirmationID && Element.OfferID == offerID);
             var Offer_ = OfferServices.GetAll().Find(_=>_.ID==offerID);
-            BookingServices.ConfirmRide(Booking_);
-            Offer_.Earnings += Booking_.Fare;
-            Offer_.SeatsAvailable -= Booking_.Seats;
-            SaveData(Paths.Offer, OfferServices.GetAll());
-            SaveData(Paths.Booking,BookingServices.GetAll());
+            if (Offer_.SeatsAvailable >= Booking_.Seats)
+            {
+                BookingServices.ConfirmRide(Booking_);
+                Offer_.Earnings += Booking_.Fare;
+                Offer_.SeatsAvailable -= Booking_.Seats;
+                SaveData(Paths.Offer, OfferServices.GetAll());
+                SaveData(Paths.Booking, BookingServices.GetAll());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         internal List<Offer> ViewOffers(string driverID)
@@ -161,6 +169,7 @@ namespace CarPoolApplication
                 VehicleID = vehicleID,
                 Source = source,
                 Destination = destinaiton,
+                CurrentLocaton=source,
                 ViaPoints = viaPoints,
                 SeatsAvailable = seats,
                 StartDate = startDate,
@@ -174,7 +183,7 @@ namespace CarPoolApplication
 
         internal decimal GetCharge(int source, int destinaiton)
         {
-            return Math.Abs(Tools.Cities[source].First() + Tools.Cities[source].Last() - Tools.Cities[destinaiton].First() - Tools.Cities[destinaiton].Last()) * (decimal)15.99;
+            return Math.Abs(destinaiton - source) * (decimal)79.68;
         }
 
         internal bool BookRide(string OfferID, Rider rider, int source, int destinaiton, decimal fare,byte seats)
@@ -194,8 +203,6 @@ namespace CarPoolApplication
                 SaveData(Paths.Offer, OfferServices.GetAll());
                 return true;
             }
-
-
         }
 
         private Booking SetRide(Rider rider, int source, int destinaiton, decimal fare, byte seats, Offer offer)
@@ -226,7 +233,12 @@ namespace CarPoolApplication
                 List<int> OfferSequence =new List<int>( Offer.ViaPoints);
                 OfferSequence.Insert(0, Offer.Source);
                 OfferSequence.Insert(OfferSequence.Count, Offer.Destination);
-                if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
+                if (OfferSequence[Offer.CurrentLocaton] >OfferSequence[Offer.Source])
+                {
+                    OfferSequence.RemoveRange(OfferSequence[Offer.Source], OfferSequence[Offer.CurrentLocaton]);
+                }
+                    
+                if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination) && Offer.Status== StatusOfRide.Created)
                 {
                     Offers.Add(Offer);
                 }
@@ -285,6 +297,31 @@ namespace CarPoolApplication
         internal int GetRidersCount(string offeriD)
         {
             return BookingServices.GetAll().FindAll(_=>_.OfferID==offeriD && _.Status!= StatusOfRide.Cancelled).Count;
+        }
+
+        internal void UpdateBookingData(string offeriD,int currentLocation)
+        {
+            var Offer_ = GetOfferByID(offeriD);
+            var AccociatedBookings=BookingServices.GetAll().FindAll(_=> _.OfferID==offeriD && _.Status== StatusOfRide.Accepted);
+            List<int> OfferSequence = new List<int>(Offer_.ViaPoints);
+            OfferSequence.Insert(0, Offer_.Source);
+            OfferSequence.Insert(OfferSequence.Count, Offer_.Destination);
+            Offer_.CurrentLocaton = currentLocation;
+            AccociatedBookings.ForEach(Element =>
+            {
+                if (OfferSequence.IndexOf(Element.Destination) <= OfferSequence.IndexOf(Offer_.CurrentLocaton))
+                {
+                    Element.Status = StatusOfRide.Completed;
+                    Offer_.SeatsAvailable += Element.Seats;
+                }
+            });
+            SaveData(Paths.Booking, BookingServices.GetAll());
+            SaveData(Paths.Offer, OfferServices.GetAll());
+        }
+
+        private Offer GetOfferByID(string offeriD)
+        {
+            return OfferServices.GetByID(offeriD);
         }
     }
 }

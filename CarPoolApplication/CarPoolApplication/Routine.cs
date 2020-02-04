@@ -205,7 +205,7 @@ namespace CarPoolApplication
         void DriverConsole(Driver driver)
         {
             int SelectedChoice = 0;
-            while (SelectedChoice != 7)
+            while (SelectedChoice != 8)
             {
                 Console.Clear();
                 Console.WriteLine("-----Welcome "+driver.Name +" to Driver Console-----");
@@ -216,7 +216,8 @@ namespace CarPoolApplication
                 Console.WriteLine("4.Approve Request");
                 Console.WriteLine("5.View Created Offer");
                 Console.WriteLine("6. Complete Offer");
-                Console.WriteLine("7.Back");
+                Console.WriteLine("7.Update Current Location");
+                Console.WriteLine("8.Back");
                 SelectedChoice = Tools.GetIntegerOnly();
                 switch (SelectedChoice)
                 {
@@ -285,7 +286,7 @@ namespace CarPoolApplication
                         }
                     case 4:
                         {
-                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver.ID);
+                            List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
                             if (OffersOfDriver.Count != 0)
                             {
                                 Console.WriteLine("Select Offer:");
@@ -302,13 +303,22 @@ namespace CarPoolApplication
                                 Requests.ForEach(Element => Console.WriteLine(Element.RiderID+" \t "+Tools.Cities[Element.Source] +" \t "+ Tools.Cities[Element.Destination]+" \t "+Element.Seats + " \t " + Element.Fare));
                                 Console.WriteLine("Enter ID to Confirm");
                                 string ConfirmationID = Console.ReadLine();
-                                Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);
+                                bool status=Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);
+                                if (status)
+                                {
+                                    Console.WriteLine("Confrimed");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Can Not Confirm Now");
+                                }
                             }
                             else
                             {
                                 Console.WriteLine("No Offer Found:");
-                                Console.ReadKey();
+                               
                             }
+                            Console.ReadKey();
                             break;
                         }
                     case 5:
@@ -327,7 +337,7 @@ namespace CarPoolApplication
                         }
                     case 6:
                         {
-                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver.ID);
+                            List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
                             Console.WriteLine("Enter Offer ID");
                             if (OffersOfDriver.Count != 0)
                             {
@@ -341,6 +351,35 @@ namespace CarPoolApplication
                                 Console.WriteLine("No Offer Found:");
                                 Console.ReadKey();
                             }
+                            break;
+                        }
+                    case 7:
+                        {
+                            List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
+                            if (OffersOfDriver.Count != 0)
+                            {
+                                Console.WriteLine("Select Offer:");
+                                OffersOfDriver.ForEach(Element => Console.WriteLine(OffersOfDriver.IndexOf(Element) + 1 + ". " + Element.ID));
+                                int Choice = Tools.GetIntegerOnly()-1;
+                                List<int> OfferSequence = new List<int>(OffersOfDriver[Choice].ViaPoints);
+                                OfferSequence.Insert(0, OffersOfDriver[Choice].Source);
+                                OfferSequence.Insert(OfferSequence.Count, OffersOfDriver[Choice].Destination);
+                                Console.WriteLine("Select Current Location:");
+                                if (OfferSequence[OffersOfDriver[Choice].CurrentLocaton] > OfferSequence[OffersOfDriver[Choice].Source])
+                                {
+                                    OfferSequence.RemoveRange(OfferSequence[OffersOfDriver[Choice].Source], OfferSequence[OffersOfDriver[Choice].CurrentLocaton]);
+                                }
+                                OfferSequence.ForEach(_ => Console.WriteLine(OfferSequence.IndexOf(_)+1 +". "+Tools.Cities[_]));
+                                int CurrentLoaction = Tools.GetIntegerOnly() - 1;
+                                OffersOfDriver[Choice].CurrentLocaton = OfferSequence[CurrentLoaction];
+                                Operation.UpdateBookingData(OffersOfDriver[Choice].ID, OfferSequence[CurrentLoaction]);
+                                Console.WriteLine("Successfully Updated");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No Offer Found:");
+                            }
+                            Console.ReadKey();
                             break;
                         }
 
@@ -399,11 +438,6 @@ namespace CarPoolApplication
                 Console.ReadKey();
             }
             
-        }
-
-        void CreateVehicle()
-        {
-
         }
     }
 }
