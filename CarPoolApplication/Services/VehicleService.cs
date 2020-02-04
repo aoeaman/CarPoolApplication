@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    class VehicleService:ICommonService<Vehicle>
+    public class VehicleService:ICommonService<Vehicle>
     {
         UtilityService Service;
         private readonly string VehiclePath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Vehicle.JSON";
@@ -16,21 +16,12 @@ namespace CarPoolApplication.Services
         public VehicleService()
         {
             Service = new UtilityService();
-        }
-
-        private List<Vehicle> GetVehicles()
-        {
-            return Vehicles;
-        }
-
-        private void SetVehicles(List<Vehicle> value)
-        {
-            Vehicles=JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(VehiclePath));
+            Vehicles = JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(VehiclePath)) ?? new List<Vehicle>();
         }
 
         public void Add(Vehicle vehicle)
         {
-            GetVehicles().Add(vehicle);
+            Vehicles.Add(vehicle);
         }
         public Vehicle Create(Vehicle vehicle)
         {
@@ -38,9 +29,14 @@ namespace CarPoolApplication.Services
             return vehicle;
         }
 
-        public IList<Vehicle> GetAll()
+        public List<Vehicle> GetAll()
         {
-            throw new NotImplementedException();
+            return Vehicles;
+        }
+
+        public List<Vehicle> GetAllByID(string ID)
+        {
+            return Vehicles.FindAll(_ => _.DriverID == ID);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace CarPoolApplication.Services
     {
         void Add(T entity);
         T Create(T entity);
-        IList<T> GetAll();
+        List<T> GetAll();
     }
 }

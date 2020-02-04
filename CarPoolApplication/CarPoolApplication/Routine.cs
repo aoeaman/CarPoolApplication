@@ -42,7 +42,7 @@ namespace CarPoolApplication
                             Console.WriteLine("Enter Passowrd");
                             string Password = Tools.ReadPassword();
                             Console.WriteLine();
-                            Rider rider = Operation.Data.Riders.Find(Element => Element.Username == UserName && Element.Password == Password);
+                            Rider rider = Operation.GetRider(UserName,Password);
                             if (rider != null)
                             {
                                 RiderConsole(rider);
@@ -84,7 +84,7 @@ namespace CarPoolApplication
                             Console.WriteLine("Enter Passowrd");
                             string Password = Tools.ReadPassword();
                             Console.WriteLine();
-                            Driver driver = Operation.Data.Drivers.Find(Element => Element.Username == UserName && Element.Password == Password);
+                            Driver driver = Operation.GetDriver(UserName,Password);
                             if (driver != null)
                             {
                                 DriverConsole(driver);
@@ -118,7 +118,7 @@ namespace CarPoolApplication
                 {
                     case 1:
                         {
-                            List<Offer> Offers = Operation.GetAllOffers();
+                            List<Offer> Offers = Operation.GetAllAvailableOffers();
                             if (Offers.Count != 0)
                             {
                                 Console.WriteLine("ID \t\t\t Source \t Destination \t Seats Available \t Status \t Start Date");
@@ -185,14 +185,14 @@ namespace CarPoolApplication
                             }
                             else
                             {
-                                Console.WriteLine("No such Booking found");
+                                Console.WriteLine("Can not cancel");
                             }
                             Console.ReadKey();
                             break;
                         }
                     case 4:
                         {
-                            List<Booking> Rides= Operation.GetBookings(rider);
+                            List<Booking> Rides= Operation.GetBookings(rider.ID);
                             Console.WriteLine("ID \t\t\t Source \t Destination \t Fare \t\t seats \t\t Status \t");
                             Rides.ForEach(Element => Console.WriteLine(Element.ID + " \t \t " + Tools.Cities[Element.Source] + " \t " + Tools.Cities[Element.Destination] + " \t " + Element.Fare + " \t\t " +Element.Seats+" \t\t "+ Element.Status + " \t\t " +"\n"));
                             Console.ReadKey();
@@ -236,13 +236,14 @@ namespace CarPoolApplication
                             string Maker = Console.ReadLine();
                             Console.WriteLine("Enter Number of Seats");
                             byte seats = Tools.GetByteOnly();
-                            Operation.AddVehicle(driver, VehicleNumber, Maker, Type, seats);
+                            Operation.AddVehicle(driver.ID, VehicleNumber, Maker, Type, seats);
                             break;
                         }
                     case 2:
                         {
                             Console.WriteLine("Select Your Vehicle");
-                            driver.VehicleIDs.ForEach(Element=>Console.WriteLine(driver.VehicleIDs.IndexOf(Element)+1 +". "+Element+" "+Operation.GetVehilce(Element)));
+                            List<Vehicle> DriverVehicles = Operation.GetDriverVehicles(driver.ID);
+                            DriverVehicles.ForEach(Element=>Console.WriteLine(DriverVehicles.IndexOf(Element)+1 +". "+Element.ID+" "+Element.Type));
                             int VehicleID = Tools.GetIntegerOnly() - 1;
                             Console.WriteLine("Following is the list of cities available in Service");
                             for(int i=0;i< Tools.Cities.Count; i++)
@@ -264,14 +265,14 @@ namespace CarPoolApplication
                                 Console.WriteLine("No you wnat to add more Via Points Y/N");
                                 choice = Console.ReadKey().KeyChar;
                             } while (choice == 'Y' || choice=='y');
-                            Console.WriteLine("Enter Seats Available :");
+                            Console.WriteLine("\nEnter Seats Available :");
                             byte Seats = Tools.GetByteOnly();
                             Console.WriteLine("Enter Start Date as dd/mm/yy :");
                             string StartDate =Console.ReadLine();
                             Console.WriteLine("Enter End Date as dd/mm/yy :");
                             string EndDate = Console.ReadLine();
 
-                            Operation.AddOffer(driver.VehicleIDs[VehicleID],driver.ID,Source,Destinaiton,ViaPoints,Seats,StartDate,EndDate);
+                            Operation.AddOffer(DriverVehicles[VehicleID].ID,driver.ID,Source,Destinaiton,ViaPoints,Seats,StartDate,EndDate);
 
                             break;
                         }
@@ -279,29 +280,29 @@ namespace CarPoolApplication
                         {
                             Console.WriteLine("Enter Offer ID");
                             string OfferID = Console.ReadLine();
-                            Operation.DeleteOffer(driver,OfferID);
+                            Operation.DeleteOffer(OfferID);
                             break;
                         }
                     case 4:
                         {
-                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver);
+                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver.ID);
                             if (OffersOfDriver.Count != 0)
                             {
                                 Console.WriteLine("Select Offer:");
                                 OffersOfDriver.ForEach(Element => Console.WriteLine(OffersOfDriver.IndexOf(Element) + 1 + ". " + Element.ID));
                                 int Choice = Tools.GetIntegerOnly();
-                                List<Booking> Requests=Operation.GetRequests(OffersOfDriver[Choice-1]);
+                                List<Booking> Requests=Operation.GetRequests(OffersOfDriver[Choice-1].ID);
                                 if (Requests.Count == 0)
                                 {
                                     Console.WriteLine("No Requests Found:");
                                     Console.ReadKey();
                                     break;
                                 }
-                                Console.WriteLine("Name \t Source \t Destination \t Number Of Seats \t Fare");
+                                Console.WriteLine("ID \t Source \t Destination \t Number Of Seats \t Fare");
                                 Requests.ForEach(Element => Console.WriteLine(Element.RiderID+" \t "+Tools.Cities[Element.Source] +" \t "+ Tools.Cities[Element.Destination]+" \t "+Element.Seats + " \t " + Element.Fare));
                                 Console.WriteLine("Enter ID to Confirm");
                                 string ConfirmationID = Console.ReadLine();
-                                Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1], ConfirmationID);
+                                Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);
                             }
                             else
                             {
@@ -312,7 +313,7 @@ namespace CarPoolApplication
                         }
                     case 5:
                         {
-                            List<Offer> Offers= Operation.ViewOffers(driver);
+                            List<Offer> Offers= Operation.ViewOffers(driver.ID);
                             if (Offers.Count == 0)
                             {
                                 Console.WriteLine("No Offers Created:");
@@ -320,20 +321,20 @@ namespace CarPoolApplication
                                 break;
                             }
                             Console.WriteLine("ID \t\t Source \t Destination \t Number of Riders \t Status \t Earnings \n");
-                            Offers.ForEach(Element => Console.WriteLine(Element.ID+ " \t " + Tools.Cities[Element.Source] + " \t " + Tools.Cities[Element.Destination] + " \t " + Element.Bookings.Count+ " \t\t\t " + Element.Status+ " \t " + Element.Earnings+" \n "));
+                            Offers.ForEach(Element => Console.WriteLine(Element.ID+ " \t " + Tools.Cities[Element.Source] + " \t " + Tools.Cities[Element.Destination] + " \t " + Operation.GetRidersCount(Element.ID)+ " \t\t\t " + Element.Status+ " \t " + Element.Earnings+" \n "));
                             Console.ReadKey();
                             break;
                         }
                     case 6:
                         {
-                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver);
+                            List<Offer> OffersOfDriver = Operation.ShowRequests(driver.ID);
                             Console.WriteLine("Enter Offer ID");
                             if (OffersOfDriver.Count != 0)
                             {
                                 OffersOfDriver.ForEach(Element => Console.WriteLine(OffersOfDriver.IndexOf(Element) + 1 + ". " + Element.ID));
                                 int Choice = Tools.GetIntegerOnly();
                                 
-                                Operation.CompleteOffer(OffersOfDriver[Choice - 1]);
+                                Operation.CompleteOffer(OffersOfDriver[Choice - 1].ID);
                             }
                             else
                             {

@@ -14,7 +14,6 @@ namespace CarPoolApplication.Models
         public byte SeatsAvailable { get; set; }
         public decimal Earnings { get; set; }
         public List<string> Requests { get; set; }
-        public List<Booking> Bookings { get; set; }
         public List<int> ViaPoints { get; set; }       
         public string EndDate { get; set; }       
     }

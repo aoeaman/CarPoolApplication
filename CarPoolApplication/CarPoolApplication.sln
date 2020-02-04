@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolApplication.Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalStorage", "LocalStorage", "{9C964F4B-984D-4170-987E-A467DF14FFA7}"
 	ProjectSection(SolutionItems) = preProject
+		Booking.JSON = Booking.JSON
 		Driver.JSON = Driver.JSON
 		Rider.JSON = Rider.JSON
 		Trips.Json = Trips.Json

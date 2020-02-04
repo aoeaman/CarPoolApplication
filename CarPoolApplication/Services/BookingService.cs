@@ -1,14 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using CarPoolApplication.Models;
+using Newtonsoft.Json;
+using System.Linq;
+
 namespace CarPoolApplication.Services
 {
-    public class BookingService:IBookingService,ICommonService<Booking>
+    public class BookingService:IBookingService
     {
         UtilityService Service;
+
+        private List<Booking> Bookings;
+        public readonly string BookingPath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Booking.JSON";
 
         public BookingService()
         {
             Service = new UtilityService();
+            Bookings= JsonConvert.DeserializeObject<List<Booking>>(File.ReadAllText(BookingPath)) ?? new List<Booking>();
         }
 
         public void ConfirmRide(Booking ride)
@@ -20,26 +28,26 @@ namespace CarPoolApplication.Services
         {
             ride.Status = StatusOfRide.Cancelled;
         }
-
-        public Booking CreateRide(Booking ride)
-        {
-            ride.ID=Service.GenerateID();
-            return ride;
-        }
-
+      
         public void Add(Booking entity)
         {
-            throw new System.NotImplementedException();
+            Bookings.Add(entity);
         }
 
         public Booking Create(Booking entity)
         {
-            throw new System.NotImplementedException();
+            entity.ID = Service.GenerateID();
+            return entity;
         }
 
-        public IList<Booking> GetAll()
+        public List<Booking> GetAll()
         {
-            throw new System.NotImplementedException();
+            return Bookings;
+        }
+
+        public void Delete(string iD)
+        {
+            Bookings.Remove(Bookings.Find(_ => _.ID == iD));
         }
     }
 }

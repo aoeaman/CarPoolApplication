@@ -74,6 +74,7 @@ namespace CarPoolApplication.Services
             public readonly string Rider ="C:\\repos\\CarPoolApplication\\CarPoolApplication\\Rider.JSON";
             public readonly string Vehicle ="C:\\repos\\CarPoolApplication\\CarPoolApplication\\Vehicle.JSON";
             public readonly string Offer = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Trips.JSON";
+            public readonly string Booking = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Booking.JSON";
         }
 
         public char GetCharOnly()

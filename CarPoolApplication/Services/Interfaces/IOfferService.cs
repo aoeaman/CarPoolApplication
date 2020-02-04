@@ -7,10 +7,12 @@ namespace CarPoolApplication.Services
 {
     public interface IOfferService
     {
-        Offer Create(Offer Offer);
-
-        bool Delete(Offer Offer);
 
         Offer Update(Offer Offer);
+        void Delete(string offerID);
+        List<Offer> GetAll();
+        Offer Create(Offer offer);
+        void Add(Offer offer);
+        Offer GetByID(string offerID);
     }
 }

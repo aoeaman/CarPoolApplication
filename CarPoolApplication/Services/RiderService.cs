@@ -13,7 +13,7 @@ namespace CarPoolApplication.Services
         public RiderService()
         {
             Service = new UtilityService();
-            Riders= JsonConvert.DeserializeObject<List<Rider>>(File.ReadAllText(RiderPath));
+            Riders= JsonConvert.DeserializeObject<List<Rider>>(File.ReadAllText(RiderPath)) ?? new List<Rider>();
         }
 
         public Rider Create(Rider rider)
@@ -27,9 +27,9 @@ namespace CarPoolApplication.Services
             Riders.Add(rider);
         }
 
-        public IList<Rider> GetAll()
+        public List<Rider> GetAll()
         {
-            throw new System.NotImplementedException();
+            return Riders;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace CarPoolApplication.Services
         public DriverService()
         {
             Service = new UtilityService();
-            Drivers= JsonConvert.DeserializeObject<List<Driver>>(File.ReadAllText(DriverPath));
+            Drivers= JsonConvert.DeserializeObject<List<Driver>>(File.ReadAllText(DriverPath)) ?? new List<Driver>();
         }
 
         public void Add(Driver driver)
@@ -29,9 +29,10 @@ namespace CarPoolApplication.Services
             return driver;
         }
 
-        public IList<Driver> GetAll()
+        public List<Driver> GetAll()
         {
-            throw new NotImplementedException();
+            return Drivers;
         }
+
     }
 }

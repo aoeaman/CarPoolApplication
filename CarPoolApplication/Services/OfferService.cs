@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    public class OfferService:IOfferService,ICommonService<Offer>
+    public class OfferService:IOfferService
     {
         UtilityService Service;
-        IList<Offer> Offers;
+        List<Offer> Offers;
         public readonly string OfferPath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Trips.JSON";
         public OfferService()
         {
             Service = new UtilityService();
-            Offers= JsonConvert.DeserializeObject<List<Offer>>(File.ReadAllText(OfferPath));
+            Offers= JsonConvert.DeserializeObject<List<Offer>>(File.ReadAllText(OfferPath)) ?? new List<Offer>();
         }
 
         public void Add(Offer offer)
@@ -41,14 +41,24 @@ namespace CarPoolApplication.Services
             return Offer;
         }
 
+        public List<Offer> GetAll()
+        {
+            return Offers;
+        }
+
+        public void Delete(string iD)
+        {
+            Offers.Remove(Offers.Find(_=>_.ID==iD));
+        }
+
+        public Offer GetByID(string offerID)
+        {
+            return Offers.Find(Name => Name.ID == offerID);
+        }
+
         public Offer Update(Offer Offer)
         {
             throw new NotImplementedException();
-        }
-
-        public IList<Offer> GetAll()
-        {
-            return Offers;
         }
     }
 }
