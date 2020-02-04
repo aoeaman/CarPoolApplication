@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    public class RiderService:ICommonService<Rider>
+    public class RiderService:IUserService<Rider>
     {
         UtilityService Service;
         List<Rider> Riders;

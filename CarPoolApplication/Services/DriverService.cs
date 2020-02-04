@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    public class DriverService:ICommonService<Driver>
+    public class DriverService:IUserService<Driver>
     {
         UtilityService Service;
         List<Driver> Drivers;

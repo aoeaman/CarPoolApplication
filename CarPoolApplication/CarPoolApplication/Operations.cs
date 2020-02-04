@@ -11,8 +11,8 @@ namespace CarPoolApplication
     public class Operations
     {
         
-        ICommonService<Driver> DriverServices = new DriverService();
-        ICommonService<Rider> RiderServices = new RiderService();
+        IUserService<Driver> DriverServices = new DriverService();
+        IUserService<Rider> RiderServices = new RiderService();
         IBookingService BookingServices = new BookingService();
         IOfferService OfferServices = new OfferService();
         VehicleService VehicleServices = new VehicleService();

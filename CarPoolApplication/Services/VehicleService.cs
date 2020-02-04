@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CarPoolApplication.Models;
+using CarPoolApplication.Services.Interfaces;
 using Newtonsoft.Json;
 
 namespace CarPoolApplication.Services
 {
-    public class VehicleService:ICommonService<Vehicle>
+    public class VehicleService:IVehicleService
     {
         UtilityService Service;
         private readonly string VehiclePath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Vehicle.JSON";
@@ -32,11 +33,6 @@ namespace CarPoolApplication.Services
         public List<Vehicle> GetAll()
         {
             return Vehicles;
-        }
-
-        public List<Vehicle> GetAllByID(string ID)
-        {
-            return Vehicles.FindAll(_ => _.DriverID == ID);
         }
     }
 }

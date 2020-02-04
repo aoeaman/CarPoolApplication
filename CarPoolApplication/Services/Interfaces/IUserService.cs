@@ -5,7 +5,7 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services
 {
-    public interface ICommonService<T> where T:class
+    public interface IUserService<T> where T:class
     {
         void Add(T entity);
         T Create(T entity);
