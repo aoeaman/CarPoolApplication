@@ -7,6 +7,7 @@
         public string Number { get; set; }
         public string DriverID { get; set; }
         public byte Seats { get; set; }
+        public bool IsActive { get; set; }
         public VehicleType Type { get; set; }
     }
 }

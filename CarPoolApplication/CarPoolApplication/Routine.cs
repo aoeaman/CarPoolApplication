@@ -205,19 +205,20 @@ namespace CarPoolApplication
         void DriverConsole(Driver driver)
         {
             int SelectedChoice = 0;
-            while (SelectedChoice != 8)
+            while (SelectedChoice != 9)
             {
                 Console.Clear();
                 Console.WriteLine("-----Welcome "+driver.Name +" to Driver Console-----");
                 Console.WriteLine("Enter Your Choice");
                 Console.WriteLine("1.Register Vehicle");
-                Console.WriteLine("2.Create Offer");
-                Console.WriteLine("3.Delete Offer");
-                Console.WriteLine("4.Approve Request");
-                Console.WriteLine("5.View Created Offer");
-                Console.WriteLine("6. Complete Offer");
-                Console.WriteLine("7.Update Current Location");
-                Console.WriteLine("8.Back");
+                Console.WriteLine("2.Enable/Disable Vehicle");
+                Console.WriteLine("3.Create Offer");
+                Console.WriteLine("4.Delete Offer");
+                Console.WriteLine("5.Approve Request");
+                Console.WriteLine("6.View Created Offer");
+                Console.WriteLine("7. Complete Offer");
+                Console.WriteLine("8.Update Current Location");
+                Console.WriteLine("9.Back");
                 SelectedChoice = Tools.GetIntegerOnly();
                 switch (SelectedChoice)
                 {
@@ -242,8 +243,39 @@ namespace CarPoolApplication
                         }
                     case 2:
                         {
+                            Console.WriteLine("1. Enable Vehicle");
+                            Console.WriteLine("2. Disable Vehicle");
+                            int Choice = Tools.GetIntegerOnly();
+                            switch (Choice)
+                            {
+                                case 1:
+                                    {
+                                        List<Vehicle> DriverVehicles = Operation.GetDriverInActiveVehicles(driver.ID);
+                                        DriverVehicles.ForEach(Element => Console.WriteLine(DriverVehicles.IndexOf(Element) + 1 + ". " + Element.ID + " " + Element.Type));
+                                        int VehicleID = Tools.GetIntegerOnly() - 1;
+                                        Operation.EnableVehilce(DriverVehicles[VehicleID].ID);
+                                        break;
+                                    }
+                                case 2:
+                                    {
+                                        List<Vehicle> DriverVehicles = Operation.GetDriverActiveVehicles(driver.ID);
+                                        DriverVehicles.ForEach(Element => Console.WriteLine(DriverVehicles.IndexOf(Element) + 1 + ". " + Element.ID + " " + Element.Type));
+                                        int VehicleID = Tools.GetIntegerOnly() - 1;
+                                        if (!Operation.DisableVehilce(DriverVehicles[VehicleID].ID))
+                                        {
+                                            Console.WriteLine("Cannot Disable at this Moment as an offer is ongoing");
+                                            Console.ReadKey();
+                                        }
+                                        break;
+                                    }
+                            }
+                            
+                            break;
+                        }
+                    case 3:
+                        {
                             Console.WriteLine("Select Your Vehicle");
-                            List<Vehicle> DriverVehicles = Operation.GetDriverVehicles(driver.ID);
+                            List<Vehicle> DriverVehicles = Operation.GetDriverActiveVehicles(driver.ID);
                             DriverVehicles.ForEach(Element=>Console.WriteLine(DriverVehicles.IndexOf(Element)+1 +". "+Element.ID+" "+Element.Type));
                             int VehicleID = Tools.GetIntegerOnly() - 1;
                             Console.WriteLine("Following is the list of cities available in Service");
@@ -277,14 +309,14 @@ namespace CarPoolApplication
 
                             break;
                         }
-                    case 3:
+                    case 4:
                         {
                             Console.WriteLine("Enter Offer ID");
                             string OfferID = Console.ReadLine();
                             Operation.DeleteOffer(OfferID);
                             break;
                         }
-                    case 4:
+                    case 5:
                         {
                             List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
                             if (OffersOfDriver.Count != 0)
@@ -321,7 +353,7 @@ namespace CarPoolApplication
                             Console.ReadKey();
                             break;
                         }
-                    case 5:
+                    case 6:
                         {
                             List<Offer> Offers= Operation.ViewOffers(driver.ID);
                             if (Offers.Count == 0)
@@ -335,7 +367,7 @@ namespace CarPoolApplication
                             Console.ReadKey();
                             break;
                         }
-                    case 6:
+                    case 7:
                         {
                             List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
                             Console.WriteLine("Enter Offer ID");
@@ -353,7 +385,7 @@ namespace CarPoolApplication
                             }
                             break;
                         }
-                    case 7:
+                    case 8:
                         {
                             List<Offer> OffersOfDriver = Operation.GetOfferByDriverID(driver.ID);
                             if (OffersOfDriver.Count != 0)

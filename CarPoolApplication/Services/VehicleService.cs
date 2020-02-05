@@ -34,5 +34,10 @@ namespace CarPoolApplication.Services
         {
             return Vehicles;
         }
+
+        public Vehicle GetVehicleByID(string iD)
+        {
+            return Vehicles.Find(_ => _.ID == iD);
+        }
     }
 }

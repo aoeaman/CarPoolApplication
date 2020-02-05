@@ -17,7 +17,7 @@ namespace CarPoolApplication
         IBookingService BookingServices = new BookingService();
         IOfferService OfferServices = new OfferService();
         IVehicleService VehicleServices = new VehicleService();
-        UtilityService Tools= new UtilityService();
+        readonly UtilityService Tools= new UtilityService();
         UtilityService.Path Paths = new UtilityService.Path();
 
         internal void SaveData<T>(string path, T t)
@@ -109,7 +109,8 @@ namespace CarPoolApplication
                 Maker = maker,
                 Type = type,
                 Seats = seats,
-                DriverID=driverID
+                DriverID=driverID,
+                IsActive=true
             };
         }
 
@@ -290,9 +291,9 @@ namespace CarPoolApplication
             SaveData(Paths.Offer,OfferServices.GetAll());
         }
 
-        internal List<Vehicle> GetDriverVehicles(string driverID)
+        internal List<Vehicle> GetDriverActiveVehicles(string driverID)
         {
-            return VehicleServices.GetAll().FindAll(_ => _.DriverID == driverID);
+            return VehicleServices.GetAll().FindAll(_ => _.DriverID == driverID && _.IsActive==true);
         }
 
         internal int GetRidersCount(string offeriD)
@@ -327,6 +328,35 @@ namespace CarPoolApplication
             });
             SaveData(Paths.Booking, BookingServices.GetAll());
             SaveData(Paths.Offer, OfferServices.GetAll());
+        }
+
+        internal void EnableVehilce(string vehicleID)
+        {
+            var Vehicle_ = VehicleServices.GetVehicleByID(vehicleID);
+            Vehicle_.IsActive = true;
+            SaveData(Paths.Vehicle, VehicleServices.GetAll());
+        }
+
+        internal List<Vehicle> GetDriverInActiveVehicles(string driverID)
+        {
+            return VehicleServices.GetAll().FindAll(_ => _.DriverID == driverID && _.IsActive == false);
+        }
+
+        internal bool DisableVehilce(string vehicleiD)
+        {
+            var Vehicle_ = VehicleServices.GetVehicleByID(vehicleiD);
+            var AssociatedOffers = OfferServices.GetAll().FindAll(Element => Element.DriverID == Vehicle_.DriverID);
+            
+            if (AssociatedOffers.Any(_ => _.Status == StatusOfRide.Created))
+            {
+                return false;
+            }
+            else
+            {
+                Vehicle_.IsActive = false;
+                SaveData(Paths.Vehicle, VehicleServices.GetAll());
+                return true;
+            }
         }
 
         private Offer GetOfferByID(string offeriD)
