@@ -148,7 +148,7 @@ namespace CarPoolApplication
                             if (Choice=='Y' || Choice=='y')
                             {
                                 Console.WriteLine("\nFollowing are the list of Offers for the given Route :");
-                                List<Offer> Offers = Operation.GetOffers(Source, Destinaiton);
+                                List<Offer> Offers = Operation.GetFilteredOffers(Source, Destinaiton);
                                 if (Offers.Count != 0)
                                 {
                                     Console.WriteLine("ID \t\t\t Source \t Destination \t Seats Available \t Status \t Start Date");
@@ -251,6 +251,10 @@ namespace CarPoolApplication
                                 case 1:
                                     {
                                         List<Vehicle> DriverVehicles = Operation.GetDriverInActiveVehicles(driver.ID);
+                                        if (DriverVehicles.Count == 0)
+                                        {
+                                            break;
+                                        }
                                         DriverVehicles.ForEach(Element => Console.WriteLine(DriverVehicles.IndexOf(Element) + 1 + ". " + Element.ID + " " + Element.Type));
                                         int VehicleID = Tools.GetIntegerOnly() - 1;
                                         Operation.EnableVehilce(DriverVehicles[VehicleID].ID);
@@ -300,10 +304,10 @@ namespace CarPoolApplication
                             } while (choice == 'Y' || choice=='y');
                             Console.WriteLine("\nEnter Seats Available :");
                             byte Seats = Tools.GetByteOnly();
-                            Console.WriteLine("Enter Start Date as dd/mm/yy :");
-                            string StartDate =Console.ReadLine();
+                            Console.WriteLine("Enter Start Date as dd/MM/yyyy HH:mm :");
+                            DateTime StartDate = Tools.GetDateTimeonly();
                             Console.WriteLine("Enter End Date as dd/mm/yy :");
-                            string EndDate = Console.ReadLine();
+                            DateTime EndDate = Tools.GetDateTimeonly();
 
                             Operation.AddOffer(DriverVehicles[VehicleID].ID,driver.ID,Source,Destinaiton,ViaPoints,Seats,StartDate,EndDate);
 
@@ -335,15 +339,7 @@ namespace CarPoolApplication
                                 Requests.ForEach(Element => Console.WriteLine(Element.RiderID+" \t "+Tools.Cities[Element.Source] +" \t "+ Tools.Cities[Element.Destination]+" \t "+Element.Seats + " \t " + Element.Fare));
                                 Console.WriteLine("Enter ID to Confirm");
                                 string ConfirmationID = Console.ReadLine();
-                                bool status=Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);
-                                if (status)
-                                {
-                                    Console.WriteLine("Confrimed");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Can Not Confirm Now");
-                                }
+                                Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);                           
                             }
                             else
                             {

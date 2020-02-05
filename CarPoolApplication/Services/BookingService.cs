@@ -19,14 +19,9 @@ namespace CarPoolApplication.Services
             Bookings= JsonConvert.DeserializeObject<List<Booking>>(File.ReadAllText(BookingPath)) ?? new List<Booking>();
         }
 
-        public void ConfirmRide(Booking ride)
+        public void UpdateStatus(Booking ride,StatusOfRide status)
         {
-            ride.Status = StatusOfRide.Accepted;
-        }
-
-        public void CancelRide(Booking ride)
-        {
-            ride.Status = StatusOfRide.Cancelled;
+            ride.Status =status;
         }
       
         public void Add(Booking entity)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CarPoolApplication.Models
 {
@@ -11,8 +12,8 @@ namespace CarPoolApplication.Models
         public int CurrentLocaton { get; set; }       
         public string DriverID { get; set; }
         public string VehicleID { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public byte SeatsAvailable { get; set; }
         public decimal Earnings { get; set; }
         public List<string> Requests { get; set; }

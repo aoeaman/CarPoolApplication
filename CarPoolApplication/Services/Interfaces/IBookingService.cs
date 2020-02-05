@@ -7,8 +7,7 @@ namespace CarPoolApplication.Services
 {
     public interface IBookingService
     {
-        void ConfirmRide(Booking ride);
-        void CancelRide(Booking ride);
+        void UpdateStatus(Booking ride, StatusOfRide status);
         Booking Create(Booking ride);
         void Add(Booking ride);
         List<Booking> GetAll();

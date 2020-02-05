@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace CarPoolApplication.Services
@@ -24,6 +25,7 @@ namespace CarPoolApplication.Services
             }
             catch (Exception)
             {
+                Console.WriteLine("****Enter only numbers***");
                 return GetByteOnly();
             }
         }
@@ -38,6 +40,7 @@ namespace CarPoolApplication.Services
             }
             catch (Exception)
             {
+                Console.WriteLine("****Enter only numbers***");
                 return GetIntegerOnly();
             }
         }
@@ -87,7 +90,24 @@ namespace CarPoolApplication.Services
             }
             catch (Exception)
             {
+                Console.WriteLine("****Enter only a Character***");
                 return GetCharOnly();
+            }
+        }
+
+        public DateTime GetDateTimeonly()
+        {           
+            DateTime dateTime;
+            string dateFormat = "dd/MM/yyyy HH:mm";
+            try
+            {               
+                dateTime = DateTime.ParseExact(Console.ReadLine(), dateFormat, CultureInfo.InvariantCulture);
+                return dateTime;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Enter Correct Date in format");
+                return GetDateTimeonly();
             }
         }
     }
