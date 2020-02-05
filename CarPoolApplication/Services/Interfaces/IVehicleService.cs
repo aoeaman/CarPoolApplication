@@ -5,7 +5,7 @@ using CarPoolApplication.Models;
 
 namespace CarPoolApplication.Services.Interfaces
 {
-    interface IVehicleService
+    public interface IVehicleService
     {
         void Add(Vehicle entity);
         Vehicle Create(Vehicle entity);

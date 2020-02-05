@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using CarPoolApplication.Models;
 using CarPoolApplication.Services;
+using CarPoolApplication.Services.Interfaces;
 using Newtonsoft.Json;
 
 namespace CarPoolApplication
@@ -15,7 +16,7 @@ namespace CarPoolApplication
         IUserService<Rider> RiderServices = new RiderService();
         IBookingService BookingServices = new BookingService();
         IOfferService OfferServices = new OfferService();
-        VehicleService VehicleServices = new VehicleService();
+        IVehicleService VehicleServices = new VehicleService();
         UtilityService Tools= new UtilityService();
         UtilityService.Path Paths = new UtilityService.Path();
 
@@ -302,7 +303,7 @@ namespace CarPoolApplication
         internal void UpdateBookingData(string offeriD,int currentLocation)
         {
             var Offer_ = GetOfferByID(offeriD);
-            var AccociatedBookings=BookingServices.GetAll().FindAll(_=> _.OfferID==offeriD && _.Status== StatusOfRide.Accepted);
+            var AccociatedBookings=BookingServices.GetAll().FindAll(_=> _.OfferID==offeriD && _.Status!= StatusOfRide.Cancelled);
             List<int> OfferSequence = new List<int>(Offer_.ViaPoints);
             OfferSequence.Insert(0, Offer_.Source);
             OfferSequence.Insert(OfferSequence.Count, Offer_.Destination);
@@ -311,6 +312,15 @@ namespace CarPoolApplication
             {
                 if (OfferSequence.IndexOf(Element.Destination) <= OfferSequence.IndexOf(Offer_.CurrentLocaton))
                 {
+                    if(Element.Status== StatusOfRide.Pending)
+                {
+                    Element.Status = StatusOfRide.Rejected;
+                }
+                    else
+                    {
+                        Element.Status = StatusOfRide.Completed;
+                        Offer_.SeatsAvailable += Element.Seats;
+                    }
                     Element.Status = StatusOfRide.Completed;
                     Offer_.SeatsAvailable += Element.Seats;
                 }
