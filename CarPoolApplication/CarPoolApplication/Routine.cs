@@ -296,9 +296,10 @@ namespace CarPoolApplication
                             List<int> ViaPoints = new List<int>();
                             char choice;
                             Console.WriteLine("Do you want to add Via Points Y/N");
-                            choice = Console.ReadKey().KeyChar;
-                            while (choice == 'Y' || choice == 'y') ;
+                            choice = Tools.GetCharOnly();
+                            while (choice == 'Y' || choice == 'y') 
                             {
+                                Console.WriteLine("Enter via point");
                                 int ViaPoint = Tools.GetIntegerOnly() -1;
                                 ViaPoints.Add(ViaPoint);
                                 Console.WriteLine("Do you want to add more Via Points Y/N");
@@ -395,9 +396,9 @@ namespace CarPoolApplication
                                 OfferSequence.Insert(0, OffersOfDriver[Choice].Source);
                                 OfferSequence.Insert(OfferSequence.Count, OffersOfDriver[Choice].Destination);
                                 Console.WriteLine("Select Current Location:");
-                                if (OfferSequence[OffersOfDriver[Choice].CurrentLocaton] > OfferSequence[OffersOfDriver[Choice].Source])
+                                if (OfferSequence.IndexOf(OffersOfDriver[Choice].CurrentLocaton) > OfferSequence.IndexOf(OffersOfDriver[Choice].Source))
                                 {
-                                    OfferSequence.RemoveRange(OfferSequence[OffersOfDriver[Choice].Source], OfferSequence[OffersOfDriver[Choice].CurrentLocaton]);
+                                    OfferSequence.RemoveRange(OfferSequence.IndexOf(OffersOfDriver[Choice].Source), OfferSequence.IndexOf(OffersOfDriver[Choice].CurrentLocaton));
                                 }
                                 OfferSequence.ForEach(_ => Console.WriteLine(OfferSequence.IndexOf(_)+1 +". "+Tools.Cities[_]));
                                 int CurrentLoaction = Tools.GetIntegerOnly() - 1;

@@ -169,8 +169,7 @@ namespace CarPoolApplication
                 EndDate = endDate,
                 Status = StatusOfRide.Created,
                 DriverID = driverID,
-                Earnings = 0,
-                Requests = new List<string>(),              
+                Earnings = 0,                             
             };
         }
 
@@ -187,13 +186,11 @@ namespace CarPoolApplication
                 return false;
             }
             else
-            {
-                Offer.Requests.Add(rider.ID);
+            {               
                 Booking ride = SetRide(rider, source, destinaiton, fare*seats, seats, Offer);
                 ride = BookingServices.Create(ride);
                 BookingServices.Add(ride);              
                 SaveData(Paths.Booking, BookingServices.GetAll());
-                SaveData(Paths.Offer, OfferServices.GetAll());
                 return true;
             }
         }
@@ -226,9 +223,9 @@ namespace CarPoolApplication
                 List<int> OfferSequence =new List<int>( Offer.ViaPoints);
                 OfferSequence.Insert(0, Offer.Source);
                 OfferSequence.Insert(OfferSequence.Count, Offer.Destination);
-                if (OfferSequence[Offer.CurrentLocaton] >OfferSequence[Offer.Source])
+                if (OfferSequence.IndexOf(Offer.CurrentLocaton) >OfferSequence.IndexOf(Offer.Source))
                 {
-                    OfferSequence.RemoveRange(OfferSequence[Offer.Source], OfferSequence[Offer.CurrentLocaton]);
+                    OfferSequence.RemoveRange(OfferSequence.IndexOf(Offer.Source), OfferSequence.IndexOf(Offer.CurrentLocaton));
                 }
                     
                 if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
@@ -320,7 +317,7 @@ namespace CarPoolApplication
 
         internal int GetRidersCount(string offeriD)
         {
-            return BookingServices.GetAll().FindAll(_=>_.OfferID==offeriD && _.Status!= StatusOfRide.Cancelled).Count;
+            return BookingServices.GetAll().FindAll(_=>_.OfferID==offeriD && _.Status!= StatusOfRide.Cancelled).Count; 
         }
 
         internal void UpdateBookingData(string offeriD,int currentLocation)
