@@ -12,5 +12,6 @@ namespace CarPoolApplication.Services
         void Add(Booking ride);
         List<Booking> GetAll();
         void Delete(string iD);
+        void SaveData();
     }
 }

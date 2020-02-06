@@ -14,5 +14,6 @@ namespace CarPoolApplication.Services
         Offer Create(Offer offer);
         void Add(Offer offer);
         Offer GetByID(string offerID);
+        void SaveData();
     }
 }

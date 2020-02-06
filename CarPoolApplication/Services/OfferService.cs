@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CarPoolApplication.Models;
 using Newtonsoft.Json;
+using CarPoolApplication.Services.Interfaces;
 
 namespace CarPoolApplication.Services
 {
@@ -22,19 +23,7 @@ namespace CarPoolApplication.Services
             Offers.Add(offer);
         }
 
-        public bool Delete(Offer Offer)
-        {
-            try
-            {
-                Offers.Remove(Offer);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }       
-
+        
         public Offer Create(Offer Offer)
         {
             Offer.ID = Service.GenerateID();
@@ -59,6 +48,11 @@ namespace CarPoolApplication.Services
         public Offer Update(Offer Offer)
         {
             throw new NotImplementedException();
+        }
+
+        public void SaveData()
+        {
+            File.WriteAllText(OfferPath, JsonConvert.SerializeObject(Offers));
         }
     }
 }

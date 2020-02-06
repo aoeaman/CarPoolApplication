@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using CarPoolApplication.Models;
 using Newtonsoft.Json;
+using CarPoolApplication.Services.Interfaces;
 
 namespace CarPoolApplication.Services
 {
@@ -34,5 +34,9 @@ namespace CarPoolApplication.Services
             return Drivers;
         }
 
+        public void SaveData()
+        {
+            File.WriteAllText(DriverPath, JsonConvert.SerializeObject(Drivers));
+        }
     }
 }

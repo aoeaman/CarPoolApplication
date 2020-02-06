@@ -31,5 +31,11 @@ namespace CarPoolApplication.Services
         {
             return Riders;
         }
+
+        public void SaveData()
+        {
+            File.WriteAllText(RiderPath, JsonConvert.SerializeObject(Riders));
+        }
+
     }
 }

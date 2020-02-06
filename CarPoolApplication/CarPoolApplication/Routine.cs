@@ -19,14 +19,15 @@ namespace CarPoolApplication
         internal void RiderPanel()
         {
             int SelectedChoice = 0;
-            while (SelectedChoice != 3)
+            while (SelectedChoice != 4)
             {
                 Console.Clear();
                 Console.WriteLine("-----Welcome to Rider Panel-----");
                 Console.WriteLine("Enter Your Choice");
                 Console.WriteLine("1.Sign Up");
                 Console.WriteLine("2.Login");
-                Console.WriteLine("3.Back");
+                Console.WriteLine("3.Forgot Password");
+                Console.WriteLine("4.Back");
                 SelectedChoice = Tools.GetIntegerOnly();
                 switch (SelectedChoice)
                 {
@@ -54,6 +55,26 @@ namespace CarPoolApplication
                             }
                             break;
                         }
+                    case 3:
+                        {
+                            Console.WriteLine("Enter UserName");
+                            string UserName = Console.ReadLine();
+                            Console.WriteLine("Enter Phone Number");
+                            string PhoneNumber = Console.ReadLine();
+                            var User= Operation.PasswordHelper<Rider>(UserName,PhoneNumber);
+                            if (User != null)
+                            {
+                                Console.WriteLine("Hello "+((Rider)User).Name+"\nEnter New Passowrd");
+                                string Password = Tools.ReadPassword();
+                                Operation.SetNewPassword((Rider)User,Password);
+                            }
+                            else
+                            {
+                                Console.WriteLine("User Details Not Found \nPress any key to continue...");
+                                Console.ReadKey();
+                            }
+                            break;
+                        }
                 }
             }
         }
@@ -61,14 +82,15 @@ namespace CarPoolApplication
         internal void DriverPanel()
         {
             int SelectedChoice = 0;
-            while (SelectedChoice != 3)
+            while (SelectedChoice != 4)
             {
                 Console.Clear();
                 Console.WriteLine("-----Welcome to Driver Panel-----");
                 Console.WriteLine("Enter Your Choice");
                 Console.WriteLine("1.Sign Up");
                 Console.WriteLine("2.Login");
-                Console.WriteLine("3.Back");
+                Console.WriteLine("3.Forgot Password");
+                Console.WriteLine("4.Back");
                 SelectedChoice = Tools.GetIntegerOnly();
                 switch (SelectedChoice)
                 {
@@ -88,6 +110,26 @@ namespace CarPoolApplication
                             if (driver != null)
                             {
                                 DriverConsole(driver);
+                            }
+                            else
+                            {
+                                Console.WriteLine("User Details Not Found \nPress any key to continue...");
+                                Console.ReadKey();
+                            }
+                            break;
+                        }
+                    case 3:
+                        {
+                            Console.WriteLine("Enter UserName");
+                            string UserName = Console.ReadLine();
+                            Console.WriteLine("Enter Phone Number");
+                            string PhoneNumber = Console.ReadLine();
+                            var User = Operation.PasswordHelper<Driver>(UserName,PhoneNumber);
+                            if (User != null)
+                            {
+                                Console.WriteLine("Hello "+((Driver)User).Name+"\nEnter New Passowrd");
+                                string Password = Tools.ReadPassword();
+                                Operation.SetNewPassword((Driver)User,Password);
                             }
                             else
                             {
@@ -216,7 +258,7 @@ namespace CarPoolApplication
                 Console.WriteLine("4.Delete Offer");
                 Console.WriteLine("5.Approve Request");
                 Console.WriteLine("6.View Created Offer");
-                Console.WriteLine("7. Complete Offer");
+                Console.WriteLine("7.Complete Offer");
                 Console.WriteLine("8.Update Current Location");
                 Console.WriteLine("9.Back");
                 SelectedChoice = Tools.GetIntegerOnly();

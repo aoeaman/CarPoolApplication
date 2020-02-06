@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CarPoolApplication.Models;
 using CarPoolApplication.Services;
 using CarPoolApplication.Services.Interfaces;
-using Newtonsoft.Json;
 
 namespace CarPoolApplication
 {
@@ -16,14 +14,7 @@ namespace CarPoolApplication
         IUserService<Rider> RiderServices = new RiderService();
         IBookingService BookingServices = new BookingService();
         IOfferService OfferServices = new OfferService();
-        IVehicleService VehicleServices = new VehicleService();
-        readonly UtilityService Tools= new UtilityService();
-        UtilityService.Path Paths = new UtilityService.Path();
-
-        internal void SaveData<T>(string path, T t)
-        {
-            File.WriteAllText(path, JsonConvert.SerializeObject(t));
-        }
+        IVehicleService VehicleServices = new VehicleService();      
 
         internal void AddDriver(string name,string userName,byte age,char gender,string phoneNumber,string password,string drivingLiscenceNumber)
         {
@@ -32,7 +23,7 @@ namespace CarPoolApplication
                 Driver NewDriver = SetDriver(name, userName, age, gender, phoneNumber, password, drivingLiscenceNumber);
                 NewDriver = DriverServices.Create(NewDriver);               
                 DriverServices.Add(NewDriver);
-                SaveData(Paths.Driver, DriverServices.GetAll());
+                DriverServices.SaveData();
             }
             else
             {
@@ -66,13 +57,27 @@ namespace CarPoolApplication
                 Rider NewRider = SetRider(name, userName, age, gender, phoneNumber, password);
                 NewRider = RiderServices.Create(NewRider);
                 RiderServices.Add(NewRider);
-                SaveData(Paths.Rider, RiderServices.GetAll());
+                RiderServices.SaveData();
             }
             else
             {
                 throw new Exception();
             }
         }
+
+        internal object PasswordHelper<T>(string userName, string phoneNumber)
+        {           
+            if (typeof(T) == typeof(Driver))
+            {
+                return DriverServices.GetAll().FirstOrDefault(_ => _.Username == userName && _.PhoneNumber == phoneNumber);
+
+            }
+            else
+            {
+                return RiderServices.GetAll().FirstOrDefault(_ => _.Username == userName && _.PhoneNumber == phoneNumber);
+            }
+        }
+
 
         private static Rider SetRider(string name, string userName, byte age, char gender, string phoneNumber, string password)
         {
@@ -97,7 +102,7 @@ namespace CarPoolApplication
             Vehicle vehicle = SetVehicle(vehicleNumber, maker, type, seats,driverID);
             vehicle = VehicleServices.Create(vehicle);          
             VehicleServices.Add(vehicle);
-            SaveData(Paths.Vehicle, VehicleServices.GetAll());
+            VehicleServices.SaveData();
 
         }
 
@@ -117,7 +122,7 @@ namespace CarPoolApplication
         internal void DeleteOffer(string offerID)
         {
             OfferServices.Delete(offerID);
-            SaveData(Paths.Offer, OfferServices.GetAll());
+            OfferServices.SaveData();
         }
 
         internal List<Offer> GetOfferByDriverID(string driverID)
@@ -136,8 +141,20 @@ namespace CarPoolApplication
             var Offer_ = OfferServices.GetAll().Find(_=>_.ID==offerID);            
             BookingServices.UpdateStatus(Booking_,StatusOfRide.Accepted);
             Offer_.Earnings += Booking_.Fare;
-            SaveData(Paths.Offer, OfferServices.GetAll());
-            SaveData(Paths.Booking, BookingServices.GetAll());
+            OfferServices.SaveData();
+            BookingServices.SaveData();
+        }
+
+        internal void SetNewPassword(Driver user,string password)
+        {
+            user.Password = password;
+            DriverServices.SaveData();
+        }
+
+        internal void SetNewPassword(Rider user, string password)
+        {
+            user.Password = password;
+            RiderServices.SaveData();
         }
 
         internal List<Offer> ViewOffers(string driverID)
@@ -152,7 +169,7 @@ namespace CarPoolApplication
             Offer Offer = SetOffer(vehicleID, driverID, source, destinaiton, viaPoints, seats, startDate, endDate);
             Offer = OfferServices.Create(Offer);
             OfferServices.Add(Offer);
-            SaveData(Paths.Offer,OfferServices.GetAll());
+            OfferServices.SaveData();
         }
 
         private static Offer SetOffer(string vehicleID, string driverID, int source, int destinaiton, List<int> viaPoints, byte seats, DateTime startDate, DateTime endDate)
@@ -190,7 +207,7 @@ namespace CarPoolApplication
                 Booking ride = SetRide(rider, source, destinaiton, fare*seats, seats, Offer);
                 ride = BookingServices.Create(ride);
                 BookingServices.Add(ride);              
-                SaveData(Paths.Booking, BookingServices.GetAll());
+                BookingServices.SaveData();
                 return true;
             }
         }
@@ -281,8 +298,8 @@ namespace CarPoolApplication
             {
                 BookingServices.UpdateStatus(Booking_,StatusOfRide.Cancelled);
                 Offer.Earnings -=Booking_.Fare;
-                SaveData(Paths.Booking, BookingServices.GetAll());
-                SaveData(Paths.Offer, Data);
+                BookingServices.SaveData();
+                OfferServices.SaveData();
                 return true;
             }
         }
@@ -307,7 +324,7 @@ namespace CarPoolApplication
                 }
             }
             );
-            SaveData(Paths.Offer,OfferServices.GetAll());
+            OfferServices.SaveData();
         }
 
         internal List<Vehicle> GetDriverActiveVehicles(string driverID)
@@ -342,15 +359,15 @@ namespace CarPoolApplication
                     }
                 }
             });
-            SaveData(Paths.Booking, BookingServices.GetAll());
-            SaveData(Paths.Offer, OfferServices.GetAll());
+            BookingServices.SaveData();
+            OfferServices.SaveData();
         }
 
         internal void EnableVehilce(string vehicleID)
         {
             var Vehicle_ = VehicleServices.GetVehicleByID(vehicleID);
             Vehicle_.IsActive = true;
-            SaveData(Paths.Vehicle, VehicleServices.GetAll());
+            VehicleServices.SaveData();
         }
 
         internal List<Vehicle> GetDriverInActiveVehicles(string driverID)
@@ -370,7 +387,7 @@ namespace CarPoolApplication
             else
             {
                 Vehicle_.IsActive = false;
-                SaveData(Paths.Vehicle, VehicleServices.GetAll());
+                VehicleServices.SaveData();
                 return true;
             }
         }

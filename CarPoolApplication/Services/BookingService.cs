@@ -2,7 +2,6 @@
 using System.IO;
 using CarPoolApplication.Models;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace CarPoolApplication.Services
 {
@@ -39,10 +38,14 @@ namespace CarPoolApplication.Services
         {
             return Bookings;
         }
-
         public void Delete(string iD)
         {
             Bookings.Remove(Bookings.Find(_ => _.ID == iD));
+        }
+
+        public void SaveData()
+        {
+            File.WriteAllText(BookingPath, JsonConvert.SerializeObject(Bookings));
         }
     }
 }

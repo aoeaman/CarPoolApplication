@@ -11,5 +11,6 @@ namespace CarPoolApplication.Services.Interfaces
         Vehicle Create(Vehicle entity);
         List<Vehicle> GetAll();
         Vehicle GetVehicleByID(string iD);
+        void SaveData();
     }
 }
