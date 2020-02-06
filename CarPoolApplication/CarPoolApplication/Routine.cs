@@ -141,26 +141,26 @@ namespace CarPoolApplication
                             int Source = Tools.GetIntegerOnly() - 1;
                             Console.WriteLine("Enter Destination");
                             int Destinaiton = Tools.GetIntegerOnly() - 1;
-                            decimal Fare = Operation.GetCharge(Source,Destinaiton);
+                            Console.WriteLine("Enter number of seats to book");
+                            byte Seats = Tools.GetByteOnly();
+                            decimal Fare = Operation.GetCharge(Source,Destinaiton)*Seats;
                             Console.WriteLine("Fare for the ride is :"+Fare);
                             Console.WriteLine("Do you want Continue: Y/N");
                             char Choice = char.Parse(Console.ReadLine());
                             if (Choice=='Y' || Choice=='y')
                             {
                                 Console.WriteLine("\nFollowing are the list of Offers for the given Route :");
-                                List<Offer> Offers = Operation.GetFilteredOffers(Source, Destinaiton);
+                                List<Offer> Offers = Operation.GetFilteredOffers(Source, Destinaiton,Seats);
                                 if (Offers.Count != 0)
                                 {
-                                    Console.WriteLine("ID \t\t\t Source \t Destination \t Seats Available \t Status \t Start Date");
-                                    Offers.ForEach(Element => Console.WriteLine(Element.ID + " \t\t " + Tools.Cities[Element.Source] + " \t\t " + Tools.Cities[Element.Destination] + " \t\t " + Element.SeatsAvailable +  "\t \t" + Element.Status + " \t\t" + Element.StartDate));
-                                    Console.WriteLine("Enter number of seats to book");
-                                    byte Seats = Tools.GetByteOnly();
+                                    Console.WriteLine("ID \t\t\t Source \t Destination \t Status \t Start Date");
+                                    Offers.ForEach(Element => Console.WriteLine(Element.ID + " \t\t " + Tools.Cities[Element.Source] + " \t\t " + Tools.Cities[Element.Destination] + " \t\t " + Element.Status + " \t\t" + Element.StartDate));                                 
                                     Console.WriteLine("Enter Offer ID to book Ride");
                                     string OfferID = Console.ReadLine();
                                     bool Status=Operation.BookRide(OfferID, rider,Source,Destinaiton,Fare,Seats);
                                     if (!Status)
                                     {
-                                        Console.WriteLine("Cannot book zero or more seats than available seats");
+                                        Console.WriteLine("Invalid offer ID");
                                     }
                                 }
                                 else
@@ -295,13 +295,15 @@ namespace CarPoolApplication
                             Console.WriteLine("Enter Via Points:");
                             List<int> ViaPoints = new List<int>();
                             char choice;
-                            do
+                            Console.WriteLine("Do you want to add Via Points Y/N");
+                            choice = Console.ReadKey().KeyChar;
+                            while (choice == 'Y' || choice == 'y') ;
                             {
                                 int ViaPoint = Tools.GetIntegerOnly() -1;
                                 ViaPoints.Add(ViaPoint);
-                                Console.WriteLine("No you wnat to add more Via Points Y/N");
+                                Console.WriteLine("Do you want to add more Via Points Y/N");
                                 choice = Console.ReadKey().KeyChar;
-                            } while (choice == 'Y' || choice=='y');
+                            } 
                             Console.WriteLine("\nEnter Seats Available :");
                             byte Seats = Tools.GetByteOnly();
                             Console.WriteLine("Enter Start Date as dd/MM/yyyy HH:mm :");
@@ -336,7 +338,7 @@ namespace CarPoolApplication
                                     break;
                                 }
                                 Console.WriteLine("ID \t Source \t Destination \t Number Of Seats \t Fare");
-                                Requests.ForEach(Element => Console.WriteLine(Element.RiderID+" \t "+Tools.Cities[Element.Source] +" \t "+ Tools.Cities[Element.Destination]+" \t "+Element.Seats + " \t " + Element.Fare));
+                                Requests.ForEach(Element => Console.WriteLine(Element.ID+" \t "+Tools.Cities[Element.Source] +" \t "+ Tools.Cities[Element.Destination]+" \t "+Element.Seats + " \t " + Element.Fare));
                                 Console.WriteLine("Enter ID to Confirm");
                                 string ConfirmationID = Console.ReadLine();
                                 Operation.GetBookingConfirmed(OffersOfDriver[Choice - 1].ID, ConfirmationID);                           

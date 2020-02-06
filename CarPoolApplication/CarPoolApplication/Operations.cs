@@ -132,11 +132,10 @@ namespace CarPoolApplication
 
         internal void GetBookingConfirmed(string offerID, string confirmationID)
         {
-            var Booking_ = BookingServices.GetAll().Find(Element => Element.RiderID == confirmationID && Element.OfferID == offerID);
+            var Booking_ = BookingServices.GetAll().Find(Element => Element.ID == confirmationID);
             var Offer_ = OfferServices.GetAll().Find(_=>_.ID==offerID);            
             BookingServices.UpdateStatus(Booking_,StatusOfRide.Accepted);
             Offer_.Earnings += Booking_.Fare;
-            Offer_.SeatsAvailable -= Booking_.Seats;
             SaveData(Paths.Offer, OfferServices.GetAll());
             SaveData(Paths.Booking, BookingServices.GetAll());
         }
@@ -177,7 +176,7 @@ namespace CarPoolApplication
 
         internal decimal GetCharge(int source, int destinaiton)
         {
-            return Math.Abs(destinaiton - source) * (decimal)79.68;
+            return Math.Abs(destinaiton - source) * (decimal)179.68;
         }
 
         internal bool BookRide(string OfferID, Rider rider, int source, int destinaiton, decimal fare,byte seats)
@@ -218,12 +217,12 @@ namespace CarPoolApplication
             return OfferServices.GetAll().FindAll(Element=> Element.Status!= StatusOfRide.Completed);
         }
 
-        internal List<Offer> GetFilteredOffers(int source, int destination)
+        internal List<Offer> GetFilteredOffers(int source, int destination,byte seats)
         {
             List<Offer> Offers = new List<Offer>();
-            foreach (var Offer in OfferServices.GetAll())
+            foreach (var Offer in OfferServices.GetAll().FindAll(_=>_.Status== StatusOfRide.Created))
             {
-               
+                int MaxSeats = Offer.SeatsAvailable;
                 List<int> OfferSequence =new List<int>( Offer.ViaPoints);
                 OfferSequence.Insert(0, Offer.Source);
                 OfferSequence.Insert(OfferSequence.Count, Offer.Destination);
@@ -232,9 +231,40 @@ namespace CarPoolApplication
                     OfferSequence.RemoveRange(OfferSequence[Offer.Source], OfferSequence[Offer.CurrentLocaton]);
                 }
                     
-                if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination) && Offer.Status== StatusOfRide.Created)
+                if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
                 {
-                    Offers.Add(Offer);
+                    var AssociatedBookings = BookingServices.GetAll().FindAll(_ => _.OfferID == Offer.ID  && _.Status== StatusOfRide.Accepted);
+
+                    foreach (int Node in OfferSequence)
+                    {
+                        if (Node == destination)
+                        {
+                            if (MaxSeats >= seats)
+                            {
+                                Offers.Add(Offer);
+                                break;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        foreach (var Element in AssociatedBookings)
+                        {
+                            if (Node == Element.Source)
+                            {
+                                MaxSeats -= Element.Seats;                              
+                            }
+                            else if (Node == Element.Destination)
+                            {
+                                MaxSeats += Element.Seats;
+                            }                         
+                        }
+                        if (Node == source && seats > MaxSeats)
+                        {
+                            break;
+                        }
+                    }                   
                 }
             }
             return Offers;
@@ -312,10 +342,7 @@ namespace CarPoolApplication
                     else
                     {
                         Element.Status = StatusOfRide.Completed;
-                        Offer_.SeatsAvailable += Element.Seats;
                     }
-                    Element.Status = StatusOfRide.Completed;
-                    Offer_.SeatsAvailable += Element.Seats;
                 }
             });
             SaveData(Paths.Booking, BookingServices.GetAll());
