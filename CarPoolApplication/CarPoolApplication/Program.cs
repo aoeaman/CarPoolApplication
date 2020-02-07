@@ -8,16 +8,16 @@ namespace CarPoolApplication
         static void Main(string[] args)
         {
             UtilityService Service = new UtilityService();
-            Routine routine = new Routine();
+            Console routine = new Console();
             int SelectedChoice = 0;
             while (SelectedChoice != 3)
             {
-                Console.Clear();
-                Console.WriteLine("-----Welcome to Pooling Service-----");
-                Console.WriteLine("Enter Your Choice");
-                Console.WriteLine("1.Driver");
-                Console.WriteLine("2.Rider");
-                Console.WriteLine("3.Exit");
+                System.Console.Clear();
+                System.Console.WriteLine("-----Welcome to Pooling Service-----");
+                System.Console.WriteLine("Enter Your Choice");
+                System.Console.WriteLine("1.Driver");
+                System.Console.WriteLine("2.Rider");
+                System.Console.WriteLine("3.Exit");
                 SelectedChoice = Service.GetIntegerOnly();
                 switch (SelectedChoice)
                 {
