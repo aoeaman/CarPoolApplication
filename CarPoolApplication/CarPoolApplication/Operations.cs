@@ -248,7 +248,7 @@ namespace CarPoolApplication
                 if (OfferSequence.IndexOf(source)!=-1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
                 {
                     var AssociatedBookings = BookingServices.GetAll().FindAll(_ => _.OfferID == Offer.ID  && _.Status== StatusOfRide.Accepted);
-
+                    bool Flag = false;
                     foreach (int Node in OfferSequence)
                     {
                         if (Node == destination)
@@ -267,14 +267,26 @@ namespace CarPoolApplication
                         {
                             if (Node == Element.Source)
                             {
-                                MaxSeats -= Element.Seats;                              
+                                MaxSeats -= Element.Seats;                                
                             }
                             else if (Node == Element.Destination)
                             {
                                 MaxSeats += Element.Seats;
-                            }                         
+                            }
+                            
                         }
-                        if (Node == source && seats > MaxSeats)
+                        if (Node == source)
+                        {
+                            if (seats > MaxSeats)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                Flag = true;
+                            }
+                        }
+                        if (Flag && seats > MaxSeats)
                         {
                             break;
                         }
